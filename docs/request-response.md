@@ -1,4 +1,4 @@
-Request / Response
+Request / Response (Traduction en Cours...)
 =====
 
 Request / Response is perhaps the simplest of all the NetMQ socket combinations. That is not to say that <code>RequestSocket/ResponseSocket</code> MUST always be used together, that
