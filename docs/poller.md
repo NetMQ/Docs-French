@@ -1,4 +1,4 @@
-Handling Multiple Sockets
+Handling Multiple Sockets (Traduction en Cours...)
 =====
 
 So why would you want to handle multiple sockets anyway? Well, there are a variety of reasons, such as:
