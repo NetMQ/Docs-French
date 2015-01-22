@@ -8,14 +8,14 @@ Alors oui, NetMQ est une librairie de messaging et oui c'est rapide... Mais NetM
 
 ## Par où commencer
 
-ZeroMQ et netMQ ne sont pas juste des librairies qu'il suffit de télécharger, regarder quelques exemples de code et voilà...
+ZeroMQ et netMQ ne sont pas juste des librairies qu'il suffit de télécharger et regarder quelques exemples de code...
 Il y a une véritable philosophie derrière pour apprendre à s'en servir correctement et bien comprendre comment celà fonctionne. La meilleure façon de commencer est de lire le <a href="http://zguide.zeromq.org/page:all" target="_blank">ZeroMQ guide</a>. lisez le, re-lisez et revenez ensuite.
 
 ## Le Zero de ZeroMQ
 
 La philosophie de ZeroMQ commence avec le Zero. Zero pour zero fournisseur, zero latence, zero coût (c'est gratuit !), zero administration.
 
-Plus généralement, "zero" refère à la culture du minimalisme (C'est ce qui conduit ce projet). Nous rendons NetMQ plus puissant en réduisant la complexité plutôt qu'en ajoutant des couches de fonctionalités.
+Plus généralement, "zero" refère à la culture du minimalisme (C'est ce qui conduit ce projet). Nous rendons NetMQ plus puissant en réduisant la compléxité plutôt qu'en ajoutant des couches de fonctionnalités.
 
 ## Récupérer la librarie
 
@@ -118,34 +118,30 @@ ZeroMQ crée une file d'attente de message (Queue) par connection. Exemple, si v
 
 Avec Bind, vous autorisez les autres socket à se connecter à vous. Comme vous ne pouvez pas savoir combien de socket vont se connecter dans le futur, vous ne pouvez pas créer ces files d'attentes en avance. Elles sont donc créées à chaque fois qu'une socket clientes se connecte à vous.
 
-Avec Connect, ZeroMQ sait qu'une seule files d'attentes est à créer par connection. Ceci s'applique sur tous les type de socket à l'exception de la socket de type "ROUTER". Dans ce cas, les files d'attentes ne sont créées qu'après avoir reçus un accusé de connection de la part de la socket ou l'on se connect.
+Avec Connect, ZeroMQ sait qu'une seule file d'attente est à créer par connection. Ceci s'applique sur tous les types de socket à l'exception de la socket "ROUTER". Dans ce cas, les files d'attentes ne sont créées qu'après avoir reçu un accusé de connection de la part de la socket ou l'on se connect.
 
 Donc envoyer un message sur une socket ou personnes n'est lié (bind) où sur une socket ROUTER ou aucune connection n'est active ne crée pas de file d'attente pour stocker les messages.
 
 Quand dois je utiliser Bind et quand dois je utiliser Connect ?
 
-En rêgle générale : 
-As a very general advice: use bind on the most stable points in your architecture and connect from the more volatile endpoints. For request/reply the service provider might be point where you bind and the client uses connect. Like plain old TCP.
+En rêgle générale : utilisez "bind" sur vos noeuds  les plus stables de votre architecture et "connect" sur les noeuds les plus volatiles. Pour la pattern requete/réponse, le fournisseur de service doit être le noeud "bind" (serveur) et le client utilise "connect", comme une bonne vieille architecture client-serveur TCP.
 
-If you can't figure out which parts are more stable (i.e. peer-to-peer) think about a stable device in the middle, where boths sides can connect to.
+Si vous ne pouvez pas définir de noeuds stables (ex. peer-to-peer), peut être faut-il un noeud stable suplémentaire au milieu, ou les autres noeuds se connectent.
 
-You can read more about this at the ZeroMQ FAQ http://zeromq.org/area:faq under the "Why do I see different behavior when I bind a socket versus connect a socket?" section. 
-
+Vous pouvez en lire plus à ce sujet sur la FAQ ZeroMQ http://zeromq.org/area:faq sous la section "Why do I see different behavior when I bind a socket versus connect a socket?".
 
 
 
 ## Multipart messages
 
-ZeroMQ/NetMQ work on the concept of frames, as such most messages are considered to be made up of one or more frames. NetMQ provides some convenience methods to allow you to send string messages. You should however, familiarise yourself with the the idea of multiple frames and how they work.
+ZeroMQ/NetMQ utilise le concepte de Frame. Les messages sont composés de une ou plusieurs Frames. NetMQ fournit des méthodes pour envoyer des String mais vous devriez vous familiariser avec le concept de multiFrame et voir comment cela fonctionne.
 
-This is covered in much more detail in the [Message](http://netmq.readthedocs.org/en/latest/message/) documentation page
-
-
+Vous pouvez avoir plus de détails dans la partie [Message](http://netmq.readthedocs.org/fr/latest/message/)
 
 
 ## Patterns
 
-<a href="http://zguide.zeromq.org/page:all" target="_blank">ZeroMQ guide</a> (and therefore NetMQ) is all about patterns, and building blocks. The <a href="http://zguide.zeromq.org/page:all" target="_blank">ZeroMQ guide</a> covers everything you need to know to help you with these patterns. You should make sure you read the following sections before you attempt to start work with NetMQ.
+<a href="http://zguide.zeromq.org/page:all" target="_blank">ZeroMQ</a> (et bien sur NetMQ) n'utilise que des conceptes de pattern et de bloc de construction. Le <a href="http://zguide.zeromq.org/page:all" target="_blank">guide ZeroMQ</a> définit tout ce que vous devez savoir à propos de ces patterns. Lisez les sections suivantes du guide avant de commencer à travailler avec NetMQ.
 
 + <a href="http://zguide.zeromq.org/page:all#Chapter-Sockets-and-Patterns" target="_blank">Chapter 2 - Sockets and Patterns</a>
 + <a href="http://zguide.zeromq.org/page:all#Chapter-Advanced-Request-Reply-Patterns" target="_blank">Chapter 3 - Advanced Request-Reply Patterns</a>
@@ -153,9 +149,9 @@ This is covered in much more detail in the [Message](http://netmq.readthedocs.or
 + <a href="http://zguide.zeromq.org/page:all#Chapter-Advanced-Pub-Sub-Patterns" target="_blank">Chapter 5 - Advanced Pub-Sub Patterns</a>
 
 
-NetMQ also has some examples of a few of these patterns written using the NetMQ APIs. Should you find the pattern you are looking for in the <a href="http://zguide.zeromq.org/page:all" target="_blank">ZeroMQ guide</a> it should be fairly easy to translate that into NetMQ usage.
+NetMQ a aussi des exemples de quelques-une de ces patterns écrites avec l'Api NetMQ. Une fois votre pattern trouvée dans le  <a href="http://zguide.zeromq.org/page:all" target="_blank">guide ZeroMQ</a> c'est simple de la reproduire avec l'Api NetMQ.
 
-Here are some links to the patterns that are available within the NetMQ codebase:
+Voici quelques liens montrant des patterns reproduites avec l'api NetMQ :
 
 + <a href="https://github.com/zeromq/netmq/tree/master/src/Samples/Brokerless%20Reliability%20(Freelance%20Pattern)/Model%20One" target="_blank">Brokerless Reliability Pattern - Freelance Model one</a>
 + <a href="https://github.com/zeromq/netmq/tree/master/src/Samples/Load%20Balancing%20Pattern" target="_blank">Load Balancer Patterns</a>
@@ -163,42 +159,42 @@ Here are some links to the patterns that are available within the NetMQ codebase
 + <a href="https://github.com/zeromq/netmq/tree/master/src/Samples/Pirate%20Pattern/Simple%20Pirate" target="_blank">Simple Pirate Pattern</a>
 
 
+Pour les autres patterns, le <a href="http://zguide.zeromq.org/page:all" target="_blank">guide ZeroMQ</a> doit être votre premier réflexe.
 
-For other patterns, the <a href="http://zguide.zeromq.org/page:all" target="_blank">ZeroMQ guide</a> will be your first port of call
-
-ZeroMQ patterns are implemented by pairs of sockets with matching types. In other words, to understand ZeroMQ patterns you need to understand socket types and how they work together. Mostly, this just takes study; there is little that is obvious at this level.
-
-The built-in core ZeroMQ patterns are:
-
-+ **Request-reply**, which connects a set of clients to a set of services. This is a remote procedure call and task distribution pattern.
-+ **Pub-sub**, which connects a set of publishers to a set of subscribers. This is a data distribution pattern.
-+ **Pipeline**, which connects nodes in a fan-out/fan-in pattern that can have multiple steps and loops. This is a parallel task distribution and collection pattern.
-+ **Exclusive pair**, which connects two sockets exclusively. This is a pattern for connecting two threads in a process, not to be confused with "normal" pairs of sockets.
-
-These are the socket combinations that are valid for a connect-bind pair (either side can bind):
-
-+ <code>PublisherSocket</code> and <code>SubscriberSocket</code>
-+ <code>RequestSocket</code> and <code>ResponseSocket</code>
-+ <code>RequestSocket</code>  and <code>RouterSocket</code>
-+ <code>DealerSocket</code> and <code>ResponseSocket</code>
-+ <code>DealerSocket</code> and <code>RouterSocket</code>
-+ <code>DealerSocket</code> and <code>DealerSocket</code>
-+ <code>RouterSocket</code> and <code>RouterSocket</code>
-+ <code>PushSocket</code> and <code>PullSocket</code>
-+ <code>PairSocket</code> and <code>PairSocket</code>
-
-Any other combination will produce undocumented and unreliable results, and future versions of ZeroMQ will probably return errors if you try them. You can and will, of course, bridge other socket types via code, i.e., read from one socket type and write to another.
+Les patterns ZeroMQ sont implémentées avec des paires de sockets de différents types. En d'autre termes, pour comprendre les patterns ZeroMQ, vous devez comprendre les différents types de socket et comment ils fonctionnent ensembles.
 
 
+Les patterns de base de ZeroMQ sont :
+
+
++ **Request-reply**, qui connectent un ensemble de clients à un ensemble de services. Utilisable pour faire de l'appel de méthode à distance ou la mise en place de patterns de distribution de taches.
++ **Pub-sub**, qui connectent un ensemble de fournisseurs à un ensemble d'abonnés. C'est une pattern de distribution de donnée.
++ **Pipeline**, qui sert à envoyer des données à différents noeuds organisés en mode pipeline. Cela sert pour des patterns d'éxecution de taches en parallèles et des patterns de collection de données.
++ **Exclusive pair**, qui connectent deux sockets exclusivement. Cela sert à connecter deux thread dans un process. A ne pas confondre avec les paires de socket dites "normales".
+
+Ceci est une liste des combinaisons (connect->bind) possibles entre les différents types de sockets (bien que bind soit utilisable des deux cotés):
+
++ <code>PublisherSocket</code> et <code>SubscriberSocket</code>
++ <code>RequestSocket</code> et <code>ResponseSocket</code>
++ <code>RequestSocket</code>  et <code>RouterSocket</code>
++ <code>DealerSocket</code> et <code>ResponseSocket</code>
++ <code>DealerSocket</code> et <code>RouterSocket</code>
++ <code>DealerSocket</code> et <code>DealerSocket</code>
++ <code>RouterSocket</code> et <code>RouterSocket</code>
++ <code>PushSocket</code> et <code>PullSocket</code>
++ <code>PairSocket</code> et <code>PairSocket</code>
+
+Toutes les autres combinaisons vont générés des résultats inattendus et zeroMQ renverra surement une erreurs dans ce cas.
 
 
 ## Options
 
-NetMQ comes with several options that will effect how things work. 
+NetMQ possède plusieurs options qui affectent le déroulement des choses.
 
-Depending on the type of sockets you are using, or the topology you are attempting to create, you may find that you need to set some NeroMQ options. In NetMQ this is done using the xxxxSocket.Options property.
+Vous allez surement, suivant l'architecture que vous voulez créer ou les types de sockets utilisés, jouer avec ces options.
+Dans NetMQ, elles sont définies dans la propriété xxxxSocket.Options.
 
-Here is a listing of the available properties that you may set on a xxxxSocket. It is hard to say exactly which of these values you may need to set, as that obviously depends entirely on what you are trying to achieve. All I can do is list the options, and make you aware of them. So here they are
+Il est difficile de dire exactement quelles options vous devez mettre étant donné que celà dépend grandement de ce que vous essayez de faire.Voici une liste de ces options :
 
 + Affinity  
 + BackLog  
@@ -229,6 +225,7 @@ Here is a listing of the available properties that you may set on a xxxxSocket. 
 + TcpKeepaliveInterval
 + XPubVerbos
 
-We will not be covering all of these here, but shall instead cover them in the areas where they are used. For now just be aware that if you have read something in the <a href="http://zguide.zeromq.org/page:all" target="_blank">ZeroMQ guide</a> that mentions some option, that this is most likely the place you will need to set it/read from it
+Nous ne détaillerons pas ici ces options mais rentrerons dans le détail là ou elle sont utilisés.
+D'une manière générale, si dans le <a href="http://zguide.zeromq.org/page:all" target="_blank">guide ZeroMQ</a> une option est mentionnée, c est quelle doit être utilisée dans la pattern.
 
 
