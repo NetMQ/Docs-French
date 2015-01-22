@@ -1,4 +1,4 @@
-XPub / XSub
+XPub / XSub (Traduction en Cours...)
 =====
 
 
