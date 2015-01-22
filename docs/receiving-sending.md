@@ -1,4 +1,4 @@
-Receiving / Sending
+Receiving / Sending (Traduction en Cours...)
 =====
 
 If you have read the [Introduction](http://netmq.readthedocs.org/en/latest/introduction/) page you would have
