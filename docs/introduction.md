@@ -1,43 +1,46 @@
 Introduction
 =====
 
-So you are looking for a messaging library, you might have become frustrated with WCF or MSMQ (we know we have been there too) and heard that ZeroMQ is very fast and then you got here, NetMQ, the .net port of ZeroMQ.
+Donc vous cherchez une librarie de Messaging, vous etes frustré par WCF et MSMQ (on était dans le même cas que vous), vous avez entendu dire que ZeroMq était très rapide et maintenant vous êtes là, sur NetMq, le portage .Net de ZeroMQ.
 
-So yes, NetMQ is a messaging library and it is fast, but NetMQ has a bit of learning curve, and hopefully you will get it fast.
-
-## Where to start
-
-ZeroMQ and NetMQ is not just a library that you download, looks at the some code samples and you are done, there is a philosophy behind it and to make good use of it you have to understand it. So the best place to start is with the <a href="http://zguide.zeromq.org/page:all" target="_blank">ZeroMQ guide</a>, read it, even twice and then come back here.
-
-## The Zero in ZeroMQ
-
-The philosophy of ZeroMQ start with the zero, the zero is for zero broker (ZeroMQ is brokerless), zero latency, zero cost (it's free), zero administration.
-
-More generally, "zero" refers to the culture of minimalism that permeates the project. We add power by removing complexity rather than by exposing new functionality.
-
-## Getting the library
-
-You can get NetMQ library from <a href="https://nuget.org/packages/NetMQ/" target="_blank">nuget</a>
+Alors oui, NetMQ est une librairie de messaging et oui c'est rapide... Mais NetMQ nécessite un peu d'apprentissage et nous allons vous aider.
 
 
-## Context
+## Par où commencer
 
-The <code>NetMQContext</code> is what is used to create ALL sockets. Therefore any NetMQ code should start by creating a <code>NetMQContext</code>, which can be done by using the <code>NetMQContext.Create()</code> method. <code>NetMQContext</code> is <code>IDisposable</code> so can be used within a <code>using</code> block.
+ZeroMQ et netMQ ne sont pas juste des librairies qu'il suffit de télécharger, regarder quelques exemples de code et voilà...
+Il y a une véritable philosophie derrière pour apprendre à s'en servir correctement et bien comprendre comment celà fonctionne. La meilleure façon de commencer est de lire le <a href="http://zguide.zeromq.org/page:all" target="_blank">ZeroMQ guide</a>. lisez le, re-lisez et revenez ensuite.
 
-You should create and use exactly one context in your process. Technically, the context is the container for all sockets in a single process, and acts as the transport for inproc sockets, which are the fastest way to connect threads in one process. If at runtime a process has two contexts, these are like separate NetMQ instances. If that's explicitly what you want, OK, but otherwise you should follow these rules:
+## Le Zero de ZeroMQ
 
-Have one <code>NetMQContext</code> ONLY. This will be used to created ALL sockets within the process.
+La philosophie de ZeroMQ commence avec le Zero. Zero pour zero fournisseur, zero latence, zero coût (c'est gratuit !), zero administration.
+
+Plus généralement, "zero" refère à la culture du minimalisme (C'est ce qui conduit ce projet). Nous rendons NetMQ plus puissant en réduisant la complexité plutôt qu'en ajoutant des couches de fonctionalités.
+
+## Récupérer la librarie
+
+Vous pouvez récupérer la librairie sur <a href="https://nuget.org/packages/NetMQ/" target="_blank">nuget</a>
 
 
-## Sending and receiving
+## Contexte
 
-Since NetMQ is all about the sockets, it is only natural that one would expect to able to send/receive. Since this is such a common area of NetMQ, there is a dedicated documentation page for that which you can find here : <a href="http://netmq.readthedocs.org/en/latest/receiving-sending/">Receiving and Sending</a> 
+Le <code>NetMQContext</code> sert à créer TOUTES les Sockets. Tout code NetMQ doit commencer par créer un <code>NetMQContext</code>, ce qui est fait en utilisant la méthode <code>NetMQContext.Create()</code>. <code>NetMQContext</code> est <code>IDisposable</code> et donc utilisable dans un bloc <code>using</code>.
+
+Vous ne devez créer et utiliser qu'un seul contexte par process. Techniquement, le contexte est le conteneur de toutes les sockets pour un process et agit comme le connecteur pour les sockets de type "inproc", ce qui est la manière la plus rapide de connecter des thread dans un process. Si au runtime, un process a deux contextes, c'est comme ci vous aviez deux instances de NetMQ. Si c'est explicitement ce que vous voulez, Ok, mais sinon suivez cette rêgle : 
+
+N'ayez qu'UN <code>NetMQContext</code>. Vous pouvez créer toutes les sockets avec dans le process.
+
+
+## Recevoir et Envoyer
+
+NetMQ n'utilise ques des socket, il est donc normal de pouvoir envoyer et recevoir des données. 
+Une page dédiée est disponible ici : <a href="http://netmq.readthedocs.org/en/latest/receiving-sending/">Recevoir et Envoyer</a>.
 
 
 
-## First example
+## Premier Exemple
 
-So let's start with some code, the "Hello world" example (of course).
+Le classique "Hello world" (naturellement).
 
 **Server:**
     
@@ -64,8 +67,8 @@ So let's start with some code, the "Hello world" example (of course).
             }
         }
     }
-    
-The server create a socket of type response (you can read more on the reqeust-response chapter), bind it to port 5555 and wait for messages. You can also see that we have zero configuration, we just sending strings. NetMQ can send much more than strings, but NetMQ doesn't come with any serialization feature and you have to do it by hand, but you will learn some cool tricks for that (Multi part messages).
+ 
+Le serveur crée une socket de type "response" (vous pouvez en savoir plus dans le chapitre request-response), la bind au port 5555 et attend des messages. Il n'y a pas de configuration. Le server renvoi une String. NetMQ peut renvoyer autre chose que des String, mais il ne fait pas automatiquement de sérialization. Vous devez le faire vous-même mais vous verrez plus tard quelques petites astuces (les messages Multi Part).
   
 **Client:**
     
@@ -89,11 +92,12 @@ The server create a socket of type response (you can read more on the reqeust-re
         }
     }
 
-The client create a socket of type response, connect and start sending messages.
+Le client créée une socket de type "request", se connecte et commence a envoyer des messages.
 
-Both the sending and receive methods are blocking, for the receive it is simple, if there are no messages the method will block, for sending it is more complicated and depends on the socket type. In request socket type if the high watermark is reached or no peer is connected the method will block.
+Les méthodes d'envoi et de réception sont bloquantes. Pour la réception, c'est simple : s'il n y a pas de messages, on attend.
+Pour l'envoi, c'est plus compliqué et celà dépend du type de socket. Dans une socket de type "request", la méthode bloque jusqu'a ce que toute les données soit envoyées. Si aucune socket "response" n'est connectée, la méthode bloque jusqu'a ce qu'une socket recoive le message et renvoi une réponse.
 
-You can however call receive or send with the <code>DontWait</code> flag to avoid the waiting, make sure to wrap the send or receive with try and catch the <code>AgainException</code>, like so:
+Néanmoins vous pouvez appeller ces méthodes avec le paramêtre <code>DontWait</code> pour ne pas attendre. N'oubliez pas d'encapsuler l'appel par un try-catch sur l'exception <code>AgainException</code>, comme celà :
 
     try
     {
@@ -108,18 +112,19 @@ You can however call receive or send with the <code>DontWait</code> flag to avoi
 
 ## Bind Versus Connect
 
-In the above you may have noticed that the *Server* used *Bind* while the *Client* used *Connect*, why is this, and what is the difference?
+Dans l'exemple précédent, vous avez surement remarqué que le *Server* utilise *Bind* alors que le *Client* utilise *Connect*. Pourquoi ? Quelle est la différence ?
 
-ZeroMQ creates queues per underlying connection, e.g. if your socket is connected to 3 peer sockets there are 3 messages queues.
+ZeroMQ crée une file d'attente de message (Queue) par connection. Exemple, si votre socket est connectés à trois autres sockets, il y a 3 files d'attentes de message.
 
-With bind, you allow peers to connect to you, thus you don't know how many peers there will be in the future and you cannot create the queues in advance. Instead, queues are created as individual peers connect to the bound socket.
+Avec Bind, vous autorisez les autres socket à se connecter à vous. Comme vous ne pouvez pas savoir combien de socket vont se connecter dans le futur, vous ne pouvez pas créer ces files d'attentes en avance. Elles sont donc créées à chaque fois qu'une socket clientes se connecte à vous.
 
-With connect, ZeroMQ knows that there's going to be at least a single peer and thus it can create a single queue immediately. This applies to all socket types except ROUTER, where queues are only created after the peer we connect to has acknowledge our connection.
+Avec Connect, ZeroMQ sait qu'une seule files d'attentes est à créer par connection. Ceci s'applique sur tous les type de socket à l'exception de la socket de type "ROUTER". Dans ce cas, les files d'attentes ne sont créées qu'après avoir reçus un accusé de connection de la part de la socket ou l'on se connect.
 
-Consequently, when sending a message to bound socket with no peers, or a ROUTER with no live connections, there's no queue to store the message to.
+Donc envoyer un message sur une socket ou personnes n'est lié (bind) où sur une socket ROUTER ou aucune connection n'est active ne crée pas de file d'attente pour stocker les messages.
 
-When should I use bind and when connect?
+Quand dois je utiliser Bind et quand dois je utiliser Connect ?
 
+En rêgle générale : 
 As a very general advice: use bind on the most stable points in your architecture and connect from the more volatile endpoints. For request/reply the service provider might be point where you bind and the client uses connect. Like plain old TCP.
 
 If you can't figure out which parts are more stable (i.e. peer-to-peer) think about a stable device in the middle, where boths sides can connect to.
