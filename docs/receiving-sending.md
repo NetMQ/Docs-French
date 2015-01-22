@@ -9,7 +9,7 @@ Regardons les options que nous propose NetMQ.
 
 ## Recevoir
 
-Une <code>NetMQSocket</code> (qui est la classe dont tous les typesde socket héritent) ne possède qu'une méthode <code>public virtual void Receive(ref Msg msg, SendReceiveOptions options)</code>. La plupart du temps, vous ne l'utiliserez pas, vous utiliserez plutôt l'une des extensions disponible pour <code>IReceivingSocket</code>.
+Une <code>NetMQSocket</code> (qui est la classe dont tous les types de socket héritent) ne possède qu'une méthode <code>public virtual void Receive(ref Msg msg, SendReceiveOptions options)</code>. La plupart du temps, vous ne l'utiliserez pas, vous utiliserez plutôt l'une des extensions disponible pour <code>IReceivingSocket</code>.
 
 Voici la liste de ces extensions de méthode. Si vous ne trouvez pas celle qu'il vous faut, vous pouvez écrire la vôtre.
 
