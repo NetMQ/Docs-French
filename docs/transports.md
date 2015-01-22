@@ -1,20 +1,19 @@
 Transport Protocols (Traduction en Cours...)
 =====
 
-NetMQ comes with support for 3 main protocols
+NetMQ supporte 3 protocoles
 
 + TCP
 + InProc
 + PGM
 
-Each of these is discussed below
 
 
 
 ## TCP
 
-TCP is the most common protocol that gets used, as such most of the examples shown will use TCP. Here is another trivial
-example
+TCP est le protocole le plus commun. La plupart des exemple utilise ce protocole. Voici un exemple d'utilisation.
+
 
 
     using System;
@@ -61,8 +60,7 @@ example
         }
     }
 
-
-Which when run gives the following sort of output:
+Qui après lancement donne ce résultat :
 
 <p>
 <i>
@@ -73,16 +71,15 @@ Received World<br/>
 </i>
 </p>
 
-
-Where it can be seen that the format of the tcp information used in the <code>Bind()</code> and <code>Connect()</code> methods are of the form shown below
+Nous pouvons voir que le format pour les informations TCP spécifiées dans les méthodes <code>Bind()</code> et <code>Connect()</code> sont de cette forme :
 
 tcp://*:5555
 
-This is made up of 3 parts : 
+Il y a 3 parties : 
 
-+ [0] the "tcp" protocol part
-+ [1] the "*" part, which is either a IP address, or a wild card to match any
-+ [2] the "5555" part, which is the port number
++ [0] la définition du protocole utilisé "tcp".
++ [1] la définition de l'adresse ip utilisé ("*" veut dire n'importe quelle adresse)
++ [2] le numéro de port de connection (ici "5555")
 
 
 
@@ -90,20 +87,17 @@ This is made up of 3 parts :
 ## InProc
 
 
-InProc (In process) allows you to connect different parts the current process. This is actually quite useful, and
-you may do this for several reasons:
+InProc (In process) vous permet de vous connecter dans différentes parties du process actuel.C'est très utile pour les cas suivant :
  
-+ To do away with shared state/locks. When you send data down the wire (socket) there is no shared state to worry about
-  each end of the socket will have its own copy.
-+ Being able to communicate between very disparate parts of a system
++ Communication Inter-Thread 
++ Partage de données entre Thread -> Ne plus s'encombrer des locks. Quand vous envoyez une donnée dans des sockets, chaque paire de socket à une copie des données.
++ Communiquer entre différentes partie du system. (par exemple à la place d'avoir une class Statique)
 
-NetMQ comes with several components that use InProc, such as [Actor model] (https://github.com/zeromq/netmq/blob/master/docs/actor.md) and [Devices] (https://github.com/zeromq/netmq/blob/master/docs/devices.md), which are discussed
-in their relevant documentation pages.
+NetMQ possède plusieurs composants utilisant InProc, comme les modèles [Actor] (https://github.com/zeromq/netmq/blob/master/docs/actor.md) et [Devices] (https://github.com/zeromq/netmq/blob/master/docs/devices.md).
 
+Pour l'instant, afin de montrer une simple utilisation de Inproc, essayons d'envoyer une String (pour rester simplke mais ceci pourrait être un objet sérializé) entre 2 thread.
 
-For now to demonstrate a simple InProc arrangement, let's try and send some message (a string to keep it simple, but this could be some serialized object) between 2 threads.
-
-Here is some demo code:
+Un peu de code :
 
 
     using System;
@@ -157,7 +151,7 @@ Here is some demo code:
     }
 
 
-Which when run gives the following sort of output:
+Qui après lancement donne ce résultat :
 
 <p>
 <i>
@@ -170,38 +164,29 @@ Hello<br/>
 
 
 
-
-Where it can be seen that the format of the Inproc information used in the <code>Bind()</code> and <code>Connect()</code> methods are of the form shown below
+Nous pouvons voir que le format pour les informations InProc spécifiées dans les méthodes <code>Bind()</code> et <code>Connect()</code> sont de cette forme :
 
 **inproc://InprocTest_5555**
 
-This is made up of 2 parts : 
+Il y a 2 parties : 
 
-+ [0] the "inproc" protocol part
-+ [1] the "InprocTest_5555" part, which is an unique string that suits your needs
-
-
-
-
++ [0] la définition du protocole utilisé "inproc".
++ [1] une string unique définissant le canal ("InprocTest_5555")
 
 
 
 ## PGM
 
-Pragmatic General Multicast (PGM) is a reliable multicast transport protocol for applications that require ordered
-or unordered, duplicate-free, multicast data delivery from multiple sources to multiple receivers.  
+"Pragmatic General Multicast" (PGM) est un protocol de transport fiable pour les applications nécessitant la publication de donnée de manière ordonné ou desordonné à de multiple clients.
+ 
+Pgm guaranti qu'un client dans un groupe va recevoir toutes les données émises ou sera capables de détecter si des données ont été perdues. Le but principale de Pgm est la simplicité des opérations tout en permettant une forte scabilité et l'efficacité des échanges.
 
-Pgm guarantees that a receiver in the group either receives all data packets from transmissions and repairs, or
-is able to detect unrecoverable data packet loss. PGM is specifically intended as a workable solution for multicast
-applications with basic reliability requirements. Its central design goal is simplicity of operation with due 
-regard for scalability and network efficiency.
+Pour utiliser PGM avec NetMQ,nous devons seulement suivre ces trois rêgles :
 
-To use PGM with NetMQ, we do not have to do too much. We just need to follow these 3 pointers:
-
-1. The socket types are now <code>PublisherSocket</code> and <code>SubscriberSocket</code>
-   which are talked about in more detail in the [pub-sub] (https://github.com/zeromq/netmq/blob/master/docs/pub-sub.md) documentation.
-2. Make sure you are running the app as "Administrator"
-3. Make sure you have turned on the "Multicasting Support". You can do that as follows:
+1. Les types de socket utilisés sont <code>PublisherSocket</code> et <code>SubscriberSocket</code>
+   qui sont detaillés dans la partie [pub-sub] (https://github.com/zeromq/netmq/blob/master/docs/pub-sub.md) de la documentation.
+2. Etre sûr de lancer l'application en mode "Administrateur"
+3. Etre sûr d'avoir activer le "Support Multicast". Vous pouvez le faire comme celà :
 
 
 <br/>
@@ -209,7 +194,7 @@ To use PGM with NetMQ, we do not have to do too much. We just need to follow the
 
 
 
-Here is a small demo that use PGM, as well as <code>PublisherSocket</code> and <code>SubscriberSocket</code> and a few option values.
+Voici une petite démo utilisant PGM, ainsi que <code>PublisherSocket</code> et <code>SubscriberSocket</code> et quelques options.
 
 
 
@@ -262,7 +247,7 @@ Here is a small demo that use PGM, as well as <code>PublisherSocket</code> and <
     }
 
 
-Which when run gives the following sort of output:
+Qui après lancement donne ce résultat :
 
 <p>
 <i>
@@ -274,18 +259,18 @@ sub2 message = 'Hi'<br/>
 
 
 
-Where it can be seen that the format of the Pgm information used in the <code>Bind()</code> and <code>Connect()</code> methods are of the form shown below
+Nous pouvons voir que le format pour les informations PGM spécifiées dans les méthodes <code>Bind()</code> et <code>Connect()</code> sont de cette forme :
 
 pgm://224.0.0.1:5555
 
-This is made up of 3 parts : 
+Il y a 3 parties :
 
-+ [0] the "pgm" protocol part
-+ [1] the "224.0.0.1" part, which is either a TCPIP address, or a wild card to match any
-+ [2] the "5555" part, which is the port number
++ [0] la définition du protocole utilisé "pgm".
++ [1] la définition de l'adresse ip utilisé ("224.0.0.1"). "*" est possible.
++ [2] le numéro de port de connection (ici "5555")
 
 
-Another good source for Pgm information is actually the [PgmTests] (https://github.com/zeromq/netmq/blob/master/src/NetMQ.Tests/PgmTests.cs)
+Une autre bonne ressource pour avoir des information sur Pgm est le [PgmTests] (https://github.com/zeromq/netmq/blob/master/src/NetMQ.Tests/PgmTests.cs)
 
 
 
