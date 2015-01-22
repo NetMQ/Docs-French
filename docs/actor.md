@@ -1,4 +1,4 @@
-NetMQ Actor Model
+NetMQ Actor Model (Traduction en Cours...)
 ===
 
 ## What is an Actor model?
