@@ -34,7 +34,7 @@ N'ayez qu'UN <code>NetMQContext</code>. Vous pouvez créer toutes les sockets av
 ## Recevoir et Envoyer
 
 NetMQ n'utilise ques des socket, il est donc normal de pouvoir envoyer et recevoir des données. 
-Une page dédiée est disponible ici : <a href="http://netmq.readthedocs.org/en/latest/receiving-sending/">Recevoir et Envoyer</a>.
+Une page dédiée est disponible ici : <a href="http://netmq.readthedocs.org/fr/latest/receiving-sending/">Recevoir et Envoyer</a>.
 
 
 
