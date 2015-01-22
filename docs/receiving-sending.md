@@ -1,20 +1,17 @@
-Receiving / Sending (Traduction en Cours...)
+Recevoir / Envoyer (Traduction en Cours...)
 =====
 
-If you have read the [Introduction](http://netmq.readthedocs.org/en/latest/introduction/) page you would have
-already seen an example of <code>ReceiveString()</code> and <code>SendString()</code>, but NetMQ allows us to send more than just strings.
+Si vous avez lu la page d'[Introduction](http://netmq.readthedocs.org/en/latest/introduction/), vous avez déjà vu un exemple utilisant les méthodes <code>ReceiveString()</code> et <code>SendString()</code>, mais NetMQ vous permet d'envoyer autre chose que des String.
 
-In fact there are quite a few options available to you. Lets go through some of these options shall we
-
+Regardons les options que nous propose NetMQ.
 
 
-## Receiving
 
-A <code>NetMQSocket</code> (which all the socket types inherit from) has a single <code>public virtual void Receive(ref Msg msg, SendReceiveOptions options)</code> method. But you will likely not actually use this
-method. What you will end up using is one the extra extension methods that is available for <code>IReceivingSocket</code>.
+## Recevoir
 
-These extension methods are shown below, one of these should give you what you want, but if it doesn't
-you simply need to write an extra extension method to suit your needs
+Une <code>NetMQSocket</code> (qui est la classe dont tous les typesde socket héritent) ne possède qu'une méthode <code>public virtual void Receive(ref Msg msg, SendReceiveOptions options)</code>. La plupart du temps, vous ne l'utiliserez pas, vous utiliserez plutôt l'une des extensions disponible pour <code>IReceivingSocket</code>.
+
+Voici la liste de ces extensions de méthode. Si vous ne trouvez pas celle qu'il vous faut, vous pouvez écrire la vôtre.
 
 
     public static class ReceivingSocketExtensions
@@ -47,7 +44,7 @@ you simply need to write an extra extension method to suit your needs
     }
 
 
-Here is an example of how one of the above extension methods is implemented, which may help you should you wish to write your own
+Voici un exemple d'implémentation d'une extension de méthode, ce qui devrait vous aider si vous décidez d'écrire la vôtre.
 
 
     public static string ReceiveString(this IReceivingSocket socket, Encoding encoding, SendReceiveOptions options, out bool hasMore)
@@ -67,13 +64,12 @@ Here is an example of how one of the above extension methods is implemented, whi
 
 
 
-## Sending
+## Envoyer
 
-A <code>NetMQSocket</code> (which all the socket types inherit from) has a single <code>public virtual void Send(ref Msg msg, SendReceiveOptions options)</code> method. But you will likely not actually use this
-method. What you will end up using is one the extra extension methods that is available for <code>IOutgoingSocket</code>. 
+Une <code>NetMQSocket</code> (qui est la classe dont tous les types de socket héritent) ne possède qu'une méthode <code>public virtual void Send(ref Msg msg, SendReceiveOptions options)</code>. La plupart du temps, vous ne l'utiliserez pas, vous utiliserez plutôt l'une des extensions disponible pour <code>IOutgoingSocket</code>.
 
-These extension methods are shown below, one of these should give you what you want, but if it doesn't
-you simply need to write an extra extension method to suit your needs
+Voici la liste de ces extensions de méthode. Si vous ne trouvez pas celle qu'il vous faut, vous pouvez écrire la vôtre.
+
 
 
     public static class OutgoingSocketExtensions
@@ -94,7 +90,8 @@ you simply need to write an extra extension method to suit your needs
     }
 
 
-Here is an example of how one of the above extension methods is implemented, which may help you should you wish to write your own
+Voici un exemple d'implémentation d'une extension de méthode, ce qui devrait vous aider si vous décidez d'écrire la vôtre.
+
 
 
     public static void Send(this IOutgoingSocket socket, string message, Encoding encoding, SendReceiveOptions options)
@@ -107,6 +104,6 @@ Here is an example of how one of the above extension methods is implemented, whi
     }
 
 
-## Further Reading
+## Pour aller plus loin
 
-If you are looking at some of the method signatures, and wondering why/how you should use them, you should read a bit more on the messaging philosophy that NetMQ uses. The [Message](http://netmq.readthedocs.org/en/latest/message/) page has some helpful information around this area.
+Si vous regarder certaines signatures des méthodes et vous demandez pourquoi/comment les utiliser, vous devriez lire un peu plus sur la philosophie de Messaging que NetMQ utilise. La page [Message](http://netmq.readthedocs.org/en/latest/message/) vous donnera plus de détail.
