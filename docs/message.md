@@ -1,4 +1,4 @@
-What's a message
+What's a message (Traduction en Cours...)
 =====
 
 So if you have come here after looking at some of the introductory material, you may have come across an example or 2, maybe even a "hello world" example which may have gone something like this:
