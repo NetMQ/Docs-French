@@ -12,7 +12,7 @@ NetMQ supporte 3 protocoles
 
 ## TCP
 
-TCP est le protocole le plus commun. La plupart des exemple utilise ce protocole. Voici un exemple d'utilisation.
+TCP est le protocole le plus commun. La plupart des exemples utilise ce protocole. Voici un exemple d'utilisation.
 
 
 
@@ -87,15 +87,15 @@ Il y a 3 parties :
 ## InProc
 
 
-InProc (In process) vous permet de vous connecter dans différentes parties du process actuel.C'est très utile pour les cas suivant :
+InProc (In process) vous permet de vous connecter dans différentes parties du process actuel. C'est très utile dans les cas suivant :
  
 + Communication Inter-Thread 
 + Partage de données entre Thread -> Ne plus s'encombrer des locks. Quand vous envoyez une donnée dans des sockets, chaque paire de socket à une copie des données.
-+ Communiquer entre différentes partie du system. (par exemple à la place d'avoir une class Statique)
++ Communiquer entre différentes partie du system. (par exemple à la place d'avoir une classe Statique)
 
 NetMQ possède plusieurs composants utilisant InProc, comme les modèles [Actor] (https://github.com/zeromq/netmq/blob/master/docs/actor.md) et [Devices] (https://github.com/zeromq/netmq/blob/master/docs/devices.md).
 
-Pour l'instant, afin de montrer une simple utilisation de Inproc, essayons d'envoyer une String (pour rester simplke mais ceci pourrait être un objet sérializé) entre 2 thread.
+Pour l'instant, afin de montrer une simple utilisation de Inproc, essayons d'envoyer une String (pour rester simple mais ceci pourrait être un objet sérializé) entre 2 thread.
 
 Un peu de code :
 
@@ -177,11 +177,11 @@ Il y a 2 parties :
 
 ## PGM
 
-"Pragmatic General Multicast" (PGM) est un protocol de transport fiable pour les applications nécessitant la publication de donnée de manière ordonné ou desordonné à de multiple clients.
+"Pragmatic General Multicast" (PGM) est un protocol de transport fiable pour les applications nécessitant la publication de donnée de manière ordonnée ou desordonnée à de multiple clients.
  
 Pgm guaranti qu'un client dans un groupe va recevoir toutes les données émises ou sera capables de détecter si des données ont été perdues. Le but principale de Pgm est la simplicité des opérations tout en permettant une forte scabilité et l'efficacité des échanges.
 
-Pour utiliser PGM avec NetMQ,nous devons seulement suivre ces trois rêgles :
+Pour utiliser PGM avec NetMQ, nous devons seulement suivre ces trois rêgles :
 
 1. Les types de socket utilisés sont <code>PublisherSocket</code> et <code>SubscriberSocket</code>
    qui sont detaillés dans la partie [pub-sub] (https://github.com/zeromq/netmq/blob/master/docs/pub-sub.md) de la documentation.
@@ -270,7 +270,7 @@ Il y a 3 parties :
 + [2] le numéro de port de connection (ici "5555")
 
 
-Une autre bonne ressource pour avoir des information sur Pgm est le [PgmTests] (https://github.com/zeromq/netmq/blob/master/src/NetMQ.Tests/PgmTests.cs)
+Une autre bonne ressource pour avoir des informations sur Pgm est le [PgmTests] (https://github.com/zeromq/netmq/blob/master/src/NetMQ.Tests/PgmTests.cs)
 
 
 
