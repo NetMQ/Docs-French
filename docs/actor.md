@@ -1,44 +1,40 @@
-NetMQ Actor Model (Traduction en Cours...)
+NetMQ Modèle Acteur (Traduction en Cours...)
 ===
 
-## What is an Actor model?
+## Qu'est ce que le Modèle Acteur ?
 
 
-Here is what Wikipedia has to same in the introduction to what an Actor Model is.
+Voici ce que dit wikipedia sur le modèle Acteur.
 
-<p><i>
-The actor model in computer science is a mathematical model of concurrent computation that treats “actors” as the universal primitives of concurrent digital computation: in response to a message that it receives, an actor can make local decisions, create more actors, send more messages, and determine how to respond to the next message received.
-
-….
+<p><i> En informatique, le modèle d'acteur est un modèle mathématique qui considère des acteurs comme les seules fonctions primitives nécessaires pour la programmation concurrente. Les acteurs communiquent par échange de messages. En réponse à un message, un acteur peut effectuer un traitement local, créer d'autres acteurs, ou envoyer d'autres messages.
 
 ….
 
-The Actor model adopts the philosophy that everything is an actor. This is similar to the everything is an object philosophy used by some object-oriented programming languages, but differs in that object-oriented software is typically executed sequentially, while the Actor model is inherently concurrent.
+….
+
+Le modèle considère que tout est acteur. Un acteur est une entité capable de calculer, qui, en réponse à un message reçu, peut parallèlement :
+<br><br>
++ envoyer un nombre fini de messages à d’autres acteurs.<br>
++ créer un nombre fini de nouveaux acteurs.<br>
++ spécifier le comportement à avoir lors de la prochaine réception de messages.<br>
+<br/>
+L’exécution des tâches ci-dessus n’est pas ordonnée, elles peuvent être parallélisées.
 <br/><br/>
-An actor is a computational entity that, in response to a message it receives, can concurrently:
-+ send a finite number of messages to other actors
-+ create a finite number of new actors
-+ designate the behavior to be used for the next message it receives
+L’avancée fondamentale du modèle d’acteur et qu’il découple l’émetteur du message du message lui-même, permettant donc l’asynchronisme des communications et l’introduction de structures de contrôle dédiées à l’échange de messages.
 <br/><br/>
-There is no assumed sequence to the above actions and they could be carried out in parallel.
+Les destinataires des messages sont identifiés à l’aide d’adresses. Un acteur doit connaître l’adresse de l’acteur à qui il veut envoyer un message. Les adresses des acteurs créés sont connues de l’acteur parent. Les adresses peuvent être échangées par message.
 <br/><br/>
-Decoupling the sender from communications sent was a fundamental advance of the Actor model enabling asynchronous communication and control structures as patterns of passing messages.
-<br/>
-<br/>
-Recipients of messages are identified by address, sometimes called “mailing address”. Thus an actor can only communicate with actors whose addresses it has. It can obtain those from a message it receives, or if the address is for an actor it has itself created.
-<br/>
-<br/>
-The Actor model is characterized by inherent concurrency of computation within and among actors, dynamic creation of actors, inclusion of actor addresses in messages, and interaction only through direct asynchronous message passing with no restriction on message arrival order.
+Du fait de l’asynchronisme des communications, de la création dynamique d’acteurs et de l’échange des adresses des acteurs, le modèle est intrinsèquement asynchrone.
 </i></p>
 <p>
-<a href="http://en.wikipedia.org/wiki/Actor_model" target="_blank">http://en.wikipedia.org/wiki/Actor_model</a>
+<a href="http://fr.wikipedia.org/wiki/Mod%C3%A8le_d%27acteur" target="_blank">http://fr.wikipedia.org/wiki/Mod%C3%A8le_d%27acteur</a>
 </p>
 
 <p>
 A nice way to think of Actors is that they may be used to alleviate some of synchronization concerns of using shared data structures. This is achieved by your application code talking to actors via message passing/receiving. The actor itself may pass messages to other actors, or work on the passed message itself. By using message passing rather than using shared data structures, it may help to think of the actor (or any subsequent actors its send messages to) working on a copy of the data rather than working on the same shared structures. Which kind of gets rid of the need to worry about nasty things like lock(s) and any nasty timing issues that may arise from carrying out multi threaded code. If the actor is working with its own copy of the data then we should have no issues with other threads wanting to work with the data  the actor has, as the only place that data can be is within the actor itself, that is unless we pass another message to a different actor. If we were to do that though the new message to the other actor would also be a copy of the data, so would also be thread safe.
 </p>
 <p>
-I hope you see what I am trying to explain there, may be a diagram may help.
+J'espère que vous avez compris ce que j'essais d'expliquer, peut être qu'un diagramme pourrait aider.
 </p>
 
 
