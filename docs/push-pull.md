@@ -1,4 +1,4 @@
-Push / Pull
+Push / Pull (Traduction en Cours...)
 =====
 
 NetMQ comes with a <code>PushSocket</code> and a <code>PullSocket</code>. What are these and how should they be used?
