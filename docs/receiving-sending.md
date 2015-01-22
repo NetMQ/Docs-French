@@ -1,4 +1,4 @@
-Recevoir / Envoyer (Traduction en Cours...)
+Recevoir / Envoyer
 =====
 
 Si vous avez lu la page d'[Introduction](http://netmq.readthedocs.org/en/latest/introduction/), vous avez déjà vu un exemple utilisant les méthodes <code>ReceiveString()</code> et <code>SendString()</code>, mais NetMQ vous permet d'envoyer autre chose que des String.
