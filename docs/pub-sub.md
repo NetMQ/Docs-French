@@ -1,4 +1,4 @@
-Pub/Pub
+Pub/Pub (Traduction en Cours...)
 =====
 
 NetMQ comes with support for Pub/Sub by way of 2 sockets
