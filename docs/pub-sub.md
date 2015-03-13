@@ -1,12 +1,13 @@
-Pub/Pub (Traduction en Cours...)
+Pub/Pub
 =====
 
-NetMQ comes with support for Pub/Sub by way of 2 sockets
+NetMQ gère la pattern Pub/Sub avec ces deux socket :
 
 + <code>PublisherSocket</code>
 + <code>SubscriberSocket</code>
 
-Which as usual can be created by using the <code>NetMQContext</code> methods <code>.CreateXXXSocket()</code> methods. Which in this case would be 
+Comme d'habitude, on les crées à partir du <code>NetMQContext</code> avec la méthode <code>.CreateXXXSocket()</code>.
+Ce qui donne : 
 
 + <code>CreatePublisherSocket()</code>
 + <code>CreateSubscriberSocket()</code>
@@ -14,8 +15,7 @@ Which as usual can be created by using the <code>NetMQContext</code> methods <co
 
 ## Topics
 
-NetMQ allows the use of topics, such that the <code>PublisherSocket</code> may send frame 1 (see the [messages documentation page](https://github.com/zeromq/netmq/blob/master/docs/message.md)) of the message which contains
-the topic name followed by the actual message, where you may have something like this
+NetMQ permet l'utilisation de topics (canaux), <code>PublisherSocket</code> envoie la "frame" 1( [messages documentation page](https://github.com/zeromq/netmq/blob/master/docs/message.md)) du message qui contiendra le topic et dans la frame 2 le message en lui même, ce qui donne :
 
 <table CellSpacing="0" Padding="0">
 <tr bgcolor="LightGray">
@@ -24,7 +24,7 @@ the topic name followed by the actual message, where you may have something like
 </tr>
 <tr>
 <td width="80px" style="text-align:center; ">TopicA</td>
-<td width="400px" style="text-align:center;">This is a 'TopicA' message</td>
+<td width="400px" style="text-align:center;">C'est un message dans le 'TopicA'</td>
 </tr>
 </table>
 
