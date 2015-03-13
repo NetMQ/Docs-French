@@ -58,7 +58,7 @@ Il est possible de s'abonner à tous les messages en mettant une chaine de carac
 
 ## Exemple
 
-Cet exepmple est très simple et suis ces rêgles : 
+Cet exemple est très simple et suis ces rêgles : 
 
 + Il y a un publisher qui crée, soit des message pour le  topicA', soit des méssages pour le 'topicB' (dépend d'un nombre aléatoire)
 + Il y a un Subscriber générique (le nom du topic auquel il s'abonne est passé en paramètre dans la ligne de commande)
@@ -218,19 +218,19 @@ Vous devriez voir ceci :
 
 
 
-Other Considerations
+Autres Considérations
 =====
 
 **HighWaterMark**
 
 
-The <code>SendHighWaterMark/ReceiveHighWaterMark</code> options set the high water mark for the specified socket. The high water mark is a hard limit on the maximum number of outstanding messages NetMQ shall queue in memory for any single peer that the specified socket is communicating with.
+Les options <code>SendHighWaterMark/ReceiveHighWaterMark</code> spécifie le 'high water mark' pour la socket. Le 'high water mark' est une limite spécifiant le nombre maximum de message pouvant être empilés entre deux socket.
 
-If this limit has been reached the socket shall enter an exceptional state and depending on the socket type, NetMQ shall take appropriate action such as blocking or dropping sent messages. 
+Si cette limite est atteinte et suivant le type de socket, la socket rentre dans un état spéciale et soit elle bloque les messages, soit elle supprime les messages suivants.
 
-The default <code>SendHighWaterMark/ReceiveHighWaterMark</code> value of zero means "no limit".
+La valeur <code>SendHighWaterMark/ReceiveHighWaterMark</code> par defaut est 0 ce qui veux dire "sans limite".
 
-You would set these 2 options using the <code>xxxxSocket.Options</code> property as follows:
+Vous pouvez voir ces deux options dans <code>xxxxSocket.Options</code> :
 
 +  <code>pubSocket.Options.SendHighWatermark = 1000;</code>
 +  <code>pubSocket.Options.ReceiveHighWatermark = 1000;</code>
@@ -239,10 +239,10 @@ You would set these 2 options using the <code>xxxxSocket.Options</code> property
 **Slow Subscribers**
 <br/>
 <br/>
-This is covered in the <a href="http://zguide.zeromq.org/php:chapter5" target="_blank">ZeroMQ guide</a>
+Cette partie est couverte dans le <a href="http://zguide.zeromq.org/php:chapter5" target="_blank">guide ZeroMQ</a>
 
 
 **Late Joining Subscribers**
 <br/>
 <br/>
-This is covered in the <a href="http://zguide.zeromq.org/php:chapter5" target="_blank">ZeroMQ guide</a>
+Cette partie est couverte dans le <a href="http://zguide.zeromq.org/php:chapter5" target="_blank">guide ZeroMQ</a>
