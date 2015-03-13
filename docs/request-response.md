@@ -86,7 +86,7 @@ Si vous lancez le code vous devriez obtenir le résultat suivant :
 
 ## Request/Response sont bloquante
 
-Comme vu précedemment, <code>RequestSocket/ResponseSocket</code> sont bloquantes, ce qui veut dire que des appels inattendus <code>SendXXXX()</code> / <code>ReceiveXXXX()</code> vons généré des exceptions.
+Comme vu précedemment, <code>RequestSocket/ResponseSocket</code> sont bloquantes, ce qui veut dire que des appels inattendus <code>SendXXXX()</code> / <code>ReceiveXXXX()</code> vont générer des exceptions.
 
 Dans cet exemple , nous appelons deux fois <code>Send()</code> dans la <code>RequestSocket</code>
 
