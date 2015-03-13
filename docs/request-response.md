@@ -1,39 +1,32 @@
-Request / Response (Traduction en Cours...)
+Request / Response
 =====
 
-Request / Response is perhaps the simplest of all the NetMQ socket combinations. That is not to say that <code>RequestSocket/ResponseSocket</code> MUST always be used together, that
-is no true at all, there are many occassions where you may want to use a particular NetMQ socket with another NetMQ socket. It is just that there are particular
-socket arrangements that happen to make a great deal of sense to use together, where <code>RequestSocket/ResponseSocket</code> are one such pattern.
+Request / Response est la plus simple des combinaisons pour les socket NetMQ. Cela ne veut pas dire que <code>RequestSocket/ResponseSocket</code> doivent toujours être utilisées ensembles, il y a d'autres combinaisons possibles. Mais c'est une pattern qui est souvent utilisée.
 <br/>
 <br/>
-The particular socket combinations that work well together are all covered in the <a href="http://zguide.zeromq.org/page:all" target="_blank">ZeroMQ guide</a>. Whilst it may seem a cop out to simply tell you to read more documentation somewhere else, there really is **NO BETTER** documentation on ZeroMQ/NetMQ than you will find in the <a href="http://zguide.zeromq.org/page:all" target="_blank">ZeroMQ guide</a>, as it covers well known
-patterns that have been proved in the field and are known to work well. 
+Vous pouvez trouvez les différentes combinaisons de socket dans le <a href="http://zguide.zeromq.org/page:all" target="_blank">guide ZeroMQ</a>. Bien qu'il soit très simple de vous dire d'aller lire de la documentation ailleurs, la raison est qu'il n y a pas meilleur documentation que le guide. 
 
-Anyway we digress, this post is about Request/Response, so lets continue to look at that shall we.
-
+Mais continuons sur les Request/Response...
 
 
 
-## What Is Request/Response
 
-Request / Response pattern is a configuration of 2 NetMQ sockets working harmoniously together. This combination of sockets are akin to what you might see when you
-make a web request. That is you make a request, and you expect a response.
+## Qu'est ce que Request/Response
 
-The <code>RequestSocket / ResponseSocket</code> are **not asynchronous, and are also blocking**, and you will get an exception if you try and read more messages than are currently available. 
+La pattern Request / Response est la plus simple. Elle s'apparente à une requete web : vous faite une requete, vous recevez une réponse.
 
-The way you should work with <code>RequestSocket/ResponseSocket</code> is as follows:
+<code>RequestSocket / ResponseSocket</code> sont **synchrone, et donc bloquante**, vous génèrerez une exception si vous essayer de lire plus de message qu'il y en a.
 
-1. Send a request message from a <code>RequestSocket</code>
-2. A <code>ResponseSocket</code> reads the request message
-3. The <code>ResponseSocket</code> sends the response message
-4. The <code>RequestSocket</code> receives the message from the <code>ResponseSocket</code>
+La manière de travailler avec <code>RequestSocket/ResponseSocket</code> est la suivante :
 
-Believe it or not you have more than likely already seen this example on numerous occassions, as it is the simplest to demonstrate.
+1. Envoyez un message avec <code>RequestSocket</code>
+2. Une <code>ResponseSocket</code>lit le message.
+3. Cette même <code>ResponseSocket</code> envoi le message de réponse
+4. La <code>RequestSocket</code> de l'étape 1 reçoie la réponse.
 
-Here is a small example where the <code>RequestSocket/ResponseSocket</code> code are all in one process, but this could be easily split between 2 processes. We are keeping this as simple
-as possible for demonstration purposes.
+Voici un exemple ou les <code>RequestSocket/ResponseSocket</code> sont dans un même processus, mais cela est facilement découpable en module client/serveur.
 
-Example:
+Exemple:
 
     using System;
     using System.Collections.Generic;
@@ -81,7 +74,7 @@ Example:
     }
 
 
-When you run this demo code you should see something like this:
+Si vous lancez le code vous devriez obtenir le résultat suivant :
 <br/>
 <br/>
 <br/>
@@ -91,11 +84,11 @@ When you run this demo code you should see something like this:
 
 
 
-## Request/Response Is Blocking
+## Request/Response sont bloquante
 
-As stated above <code>RequestSocket/ResponseSocket</code> is blocking, which means any unexpected calls to <code>SendXXXX()</code> / <code>ReceiveXXXX()</code> **WILL** result in Exceptions. Here is an exampe of just such an Exception.
+Comme vu précedemment, <code>RequestSocket/ResponseSocket</code> sont bloquantes, ce qui veut dire que des appels inattendus <code>SendXXXX()</code> / <code>ReceiveXXXX()</code> vons généré des exceptions.
 
-In this example we try and call <code>Send()</code> twice from the <code>RequestSocket</code>
+Dans cet exemple , nous appelons deux fois <code>Send()</code> dans la <code>RequestSocket</code>
 
 <br/>
 <br/>
@@ -104,7 +97,7 @@ In this example we try and call <code>Send()</code> twice from the <code>Request
 
 
 
-Or how about this example where we try and call <code>RecieveString()</code> twice, but there was only one message sent from the <code>RequestSocket</code>
+Dans cet exemple, nous appelons deux fois <code>RecieveString()</code> mais il n y a eu qu'un message envoyé par <code>RequestSocket</code>
 
 
 <br/>
@@ -112,5 +105,5 @@ Or how about this example where we try and call <code>RecieveString()</code> twi
 <img src="https://raw.githubusercontent.com/zeromq/netmq/master/docs/Images/RequestResponse2Receives.png"/>
 
 
-So be careful what you do with the Request/Response pattern, the devil is in the detail.
+Il faut donc faire attention à la manière d'utiliser la pattern Request/Response.
 
