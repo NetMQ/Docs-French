@@ -15,7 +15,7 @@ Mais continuons sur les Request/Response...
 
 La pattern Request / Response est la plus simple. Elle s'apparente à une requete web : vous faite une requete, vous recevez une réponse.
 
-<code>RequestSocket / ResponseSocket</code> sont **synchrone, et donc bloquante**, vous génèrerez une exception si vous essayer de lire plus de message qu'il y en a.
+<code>RequestSocket / ResponseSocket</code> sont **synchrones, et donc bloquantes**, vous génèrerez une exception si vous essayer de lire plus de message qu'il y en a.
 
 La manière de travailler avec <code>RequestSocket/ResponseSocket</code> est la suivante :
 
