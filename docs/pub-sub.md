@@ -30,20 +30,20 @@ NetMQ permet l'utilisation de topics (canaux), <code>PublisherSocket</code> envo
 
 <br/>
 <br/>
-An example of this in code may be something like this (though you could also use the <code>NetMQMessage</code> approach where you add the frames one by one):
+Voici comment envoyer les deux frames (Vous pouvez aussi utiliser un <code>NetMQMessage</code> et ajouter les frames une par une au message):
 <br/>
 <br/>
 
 
-    pubSocket.SendMore("TopicA").Send("This is a 'TopicA' message");
+    pubSocket.SendMore("TopicA").Send("C'est un message dans le 'TopicA'");
 
 <br/>
 <br/>
-The <code>SubscriberSocket</code> may also choose to subscribe to a certain topic only, which it does by passing the topic name into the <code>Subscribe()</code> method of the <code>SubscriberSocket</code>.
+La <code>SubscriberSocket</code> peut s'abonner à un certain topic pour recevoir les messages, ce qui est faisable en passant le nom du topic dans la méthode <code>Subscribe()</code> de <code>SubscriberSocket</code>.
 <br/>
 <br/>
 
-An example of this would be as follows:
+Voici un exemple:
 <br/>
 <br/>
 
@@ -51,21 +51,19 @@ An example of this would be as follows:
 
 <br/>
 <br/>
-## How Do You Subscribe To ALL Topics?
+## Comment s'abonner à tous les messages ?
 
-It is also possibe for a subscriber to subscribe to all topics from a publishing socket, which means it will recieve (that is providing no messages are dropped see 'Further Considerations'section below)
-ALL the messages from the <code>PublisherSocket</code> the <code>SubscriberSocket</code> is connected to. This is easily achieved, all you need to do in the subscriber is to pass an empty string ("") in for the topic name when
-calling the <code>subscriberSocket.Subscribe()</code> method. 
+Il est possible de s'abonner à tous les messages en mettant une chaine de caractère vide à la méthode <code>subscriberSocket.Subscribe()</code> method. 
 
 
-## An Example
+## Exemple
 
-Time for an example. This example is very simple, and follows these rules. 
+Cet exepmple est très simple et suis ces rêgles : 
 
-+ There is 1 Publisher, who is creating messages, that could be for "TopicA" or "TopicB" (depending on the result of the random number produced)
-+ There is a generic Subscriber (the topic name is fed in via the command line arguments) that will subscribe to the incoming topic name
++ Il y a un publisher qui crée, soit des message pour le  topicA', soit des méssages pour le 'topicB' (dépend d'un nombre aléatoire)
++ Il y a un Subscriber générique (le nom du topic auquel il s'abonne est passé en paramètre dans la ligne de commande)
 
-Here is the code:
+Voici le code:
 
 **Publisher**
 
@@ -182,8 +180,7 @@ Here is the code:
     }
 
 
-
-To run this, these 3 BAT file you may be useful, though you will need to change them to suit your code location should you choose to copy this example code into a new set of projects
+Pour lancer le programme, ces 3 fichiers BAT seront utiles.
 
 
 **RunPubSub.bat**
@@ -211,7 +208,7 @@ Subscriber.exe %topic%<br/>
 
 
 
-When you run this you should see something like this, where it can be seen that 
+Vous devriez voir ceci :
 
 
 <br/>
