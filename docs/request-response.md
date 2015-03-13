@@ -4,7 +4,7 @@ Request / Response
 Request / Response est la plus simple des combinaisons pour les socket NetMQ. Cela ne veut pas dire que <code>RequestSocket/ResponseSocket</code> doivent toujours être utilisées ensembles, il y a d'autres combinaisons possibles. Mais c'est une pattern qui est souvent utilisée.
 <br/>
 <br/>
-Vous pouvez trouvez les différentes combinaisons de socket dans le <a href="http://zguide.zeromq.org/page:all" target="_blank">guide ZeroMQ</a>. Bien qu'il soit très simple de vous dire d'aller lire de la documentation ailleurs, la raison est qu'il n y a pas meilleur documentation que le guide. 
+Vous pouvez trouver les différentes combinaisons de socket dans le <a href="http://zguide.zeromq.org/page:all" target="_blank">guide ZeroMQ</a>. Bien qu'il soit très simple de vous dire d'aller lire de la documentation ailleurs, la raison est qu'il n y a pas meilleur documentation que le guide. 
 
 Mais continuons sur les Request/Response...
 
