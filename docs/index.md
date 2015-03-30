@@ -1,5 +1,7 @@
 NetMQ
 ===================
+
+<img src="http://netmq.readthedocs.org/en/latest/Images/NetMQLogo.svg"/>
  
 NetMQ est un portage 100% natif de ZeroMQ.
  
