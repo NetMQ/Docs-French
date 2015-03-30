@@ -53,14 +53,14 @@ Voici un exemple:
 <br/>
 ## Comment s'abonner à tous les messages ?
 
-Il est possible de s'abonner à tous les messages en mettant une chaine de caractère vide à la méthode <code>subscriberSocket.Subscribe()</code> method. 
+Il est possible de s'abonner à tous les messages en mettant une chaine de caractère vide à la méthode <code>subscriberSocket.Subscribe()</code>. 
 
 
 ## Exemple
 
 Cet exemple est très simple et suis ces rêgles : 
 
-+ Il y a un publisher qui crée, soit des message pour le  topicA', soit des méssages pour le 'topicB' (dépend d'un nombre aléatoire)
++ Il y a un publisher qui crée, soit des messages pour le  topicA', soit des messages pour le 'topicB' (dépend d'un nombre aléatoire)
 + Il y a un Subscriber générique (le nom du topic auquel il s'abonne est passé en paramètre dans la ligne de commande)
 
 Voici le code:
