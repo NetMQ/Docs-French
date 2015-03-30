@@ -1,5 +1,3 @@
-NetMQ
-===================
 
 <img src="http://netmq.readthedocs.org/en/latest/Images/NetMQLogo.svg"/>
  
