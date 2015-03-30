@@ -1,4 +1,4 @@
-NetMQ Modèle Acteur (Traduction en Cours...)
+NetMQ Modèle Acteur
 ===
 
 ## Qu'est ce que le Modèle Acteur ?
@@ -20,7 +20,7 @@ Le modèle considère que tout est acteur. Un acteur est une entité capable de 
 <br/>
 L’exécution des tâches ci-dessus n’est pas ordonnée, elles peuvent être parallélisées.
 <br/><br/>
-L’avancée fondamentale du modèle d’acteur et qu’il découple l’émetteur du message du message lui-même, permettant donc l’asynchronisme des communications et l’introduction de structures de contrôle dédiées à l’échange de messages.
+L’avancée fondamentale du modèle d’acteur est qu’il découple l’émetteur du message du message lui-même, permettant donc l’asynchronisme des communications et l’introduction de structures de contrôle dédiées à l’échange de messages.
 <br/><br/>
 Les destinataires des messages sont identifiés à l’aide d’adresses. Un acteur doit connaître l’adresse de l’acteur à qui il veut envoyer un message. Les adresses des acteurs créés sont connues de l’acteur parent. Les adresses peuvent être échangées par message.
 <br/><br/>
@@ -31,16 +31,16 @@ Du fait de l’asynchronisme des communications, de la création dynamique d’a
 </p>
 
 <p>
-A nice way to think of Actors is that they may be used to alleviate some of synchronization concerns of using shared data structures. This is achieved by your application code talking to actors via message passing/receiving. The actor itself may pass messages to other actors, or work on the passed message itself. By using message passing rather than using shared data structures, it may help to think of the actor (or any subsequent actors its send messages to) working on a copy of the data rather than working on the same shared structures. Which kind of gets rid of the need to worry about nasty things like lock(s) and any nasty timing issues that may arise from carrying out multi threaded code. If the actor is working with its own copy of the data then we should have no issues with other threads wanting to work with the data  the actor has, as the only place that data can be is within the actor itself, that is unless we pass another message to a different actor. If we were to do that though the new message to the other actor would also be a copy of the data, so would also be thread safe.
+Les actor peuvent réduire les problèmes de synchronisation que l'on peut avoir en utilisant des structures de données partagées. Pour ce faire, chaque actor utilise sa propre copie de donnée. Chaque actor peut envoyer un message à un autre actor ou travailler sur un message. Il n'est donc pas necessaire de se soucié des "lock" car chaque message possède ses propres données.
 </p>
 <p>
 J'espère que vous avez compris ce que j'essais d'expliquer, peut être qu'un diagramme pourrait aider.
 </p>
 
 
-## Multi threaded application using shared data structure
+## Appplication MultiThread utilisant des données partagées
 
-A fairly common thing to do is have multiple threads running to speed things up, but then you realise that your threads need to mutate the state of some shared data structure, so then you have to involve threading synchronization primitives (most commonly <code>lock(..)</code> statements, to create your user defined critical sections). This will work, but now you are introducing artificial delays due to having to wait for the lock to be released so you can run Thread X’s code.
+La plupart du temps, on crée plusieurs thread pour accélérer les traitements, mais ceci introduit le fait de "locker" les données entre thread. Un delai est donc creer pour attendre qu'une donnée soit "dé-locker" pour être utilisée. 
 
 
 <br/>
@@ -49,8 +49,7 @@ A fairly common thing to do is have multiple threads running to speed things up,
 
 
 
-
-To take this one step further, lets see some code that may illustrate this further, imagine we had this sort of data structure representing a very slim bank account
+Voici un exemple illustrant cette idée. Imaginez que nous ayons une structure représentant un compte bancaire.
 
 
     public class Account
@@ -81,8 +80,7 @@ To take this one step further, lets see some code that may illustrate this furth
         }
     }
 
-
-Nothing fancy there, just some fields. So lets now move onto looking at some threading code, I have chosen to just show two threads acting on a shared <code>Account</code> instance.
+Regardons le code Multithread utilisé ici...
 
 
     using System;
@@ -152,13 +150,7 @@ Nothing fancy there, just some fields. So lets now move onto looking at some thr
         }
     }
 
-
-This may be an example that you think may not actually happen in real life, and to be honest this scenario may not popup in real life, as who would do something as silly as crediting an account in one thread, and debiting it in another…we are all diligent developers, we would not let this one into the code would we?
-
-To be honest whether the actual example has real world merit or not, the point remains the same, since we have more than one thread accessing a shared data structure, access to it must be synchronized, which is typically done using a lock(..) statement, as can be seen in the code.
-
-Now don’t get me wrong the above code does work, as shown in the output below:
-
+Bien que cet exemple ne représente pas une application réelle (qui écrirait une application qui crédite un compte dans un thread et le débite dans un autre ?), il marche quand même comme le montre le résultat :
 
 <p><i>
 Thread Id 6, Account balance before: 0<br/>
@@ -169,30 +161,24 @@ Thread Id 10, Subtracting 4 to balance<br/>
 Thread Id 10, Account balance before: 6<br/>
 </i></p>
 
-Perhaps there might be a more interesting way though!
+Il doit quand même y avoir une meilleure manière de faire !
 
 
 ## Actor model
 
-The actor model, takes a different approach, where by message passing is used, which may involve some form of serialization as the messages are pass down the wire, which kind of guarantees no shared structures to contend with. Now I am not saying all Actor frameworks use message passing down the wire (serialization) but the code presented in this article does.
-
-The basic idea is that each thread would talk to an actor, and send/receive message with the actor.
-
-If you wanted to get even more isolation, you could use thread local storage where each thread could have its own copy of the actor which it, and it alone talks to.
+Le model actor a une approche différente. Le message est serializer entre les différents thread, il n y a donc aucune données partagées entre les thread.
+L'idée est que chaque thread parle a un actor et reçois/envois un message avec un actor.
 
 <br/>
 <br/>
 <img src="https://raw.githubusercontent.com/zeromq/netmq/master/docs/Images/ActorPass.png"/>
 
 
-Anyway enough talking, I am sure some of you want to see the code right?
-
-
 ## Actor demo
 
-We will stick with the same type of example as we did when we used a more traditional locking/shared data approach.
+Utilisons le même exemple que precedemment mais en version Actor.
 
-Firstly lets introduce a few helper classes
+Quelques classes helper...
 
 **AccountActioner**
 
@@ -248,11 +234,8 @@ Firstly lets introduce a few helper classes
         }
     }
 
+Voici le code pour un <code>Actor</code> qui execute des action sur un <code>Account</code>. Cet exemple est volontairement simple, nous ne faisons que debiter et crediter un <code>Account</code> par un montant.
 
-And here is the entire code for an <code>Actor</code> that deals with <code>Account</code> actions. This example is deliberatley simplistic, where we only debit/credit an <code>Account</code>
-by an amount. You could send any command to the <code>Actor</code>, and the <code>Actor</code> is really a general purpose in process messaging system.
-
-Anyway here is the <code>Actor</code> code:
 
     using System;
     using System.Collections.Generic;
@@ -391,7 +374,6 @@ Anyway here is the <code>Actor</code> code:
     }
 
 
-Where you would communicate with this <code>Actor</code> code using something like this (again this could be any commands you want, this example just shows how to debit/credit an <code>Account</code>).
 
     using System;
     using System.Collections.Generic;
@@ -447,7 +429,7 @@ Where you would communicate with this <code>Actor</code> code using something li
     }
 
 
-When you run this code you should see something like this:
+Lorsque vous lancez le programme vous obenez :
 
 
 <br/>
@@ -455,8 +437,5 @@ When you run this code you should see something like this:
 <img src="https://raw.githubusercontent.com/zeromq/netmq/master/docs/Images/ActorsOut.png"/>
 
 
-
-
-We hope that gives you a taster of what you could do with an <code>Actor</code>
 
 
