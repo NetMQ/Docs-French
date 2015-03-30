@@ -429,7 +429,7 @@ Voici le code pour un <code>Actor</code> qui execute des action sur un <code>Acc
     }
 
 
-Lorsque vous lancez le programme vous obenez :
+Lorsque vous lancez le programme vous obtenez :
 
 
 <br/>
