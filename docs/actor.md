@@ -45,7 +45,8 @@ La plupart du temps, on crée plusieurs thread pour accélérer les traitements,
 
 <br/>
 <br/>
-<img src="https://raw.githubusercontent.com/zeromq/netmq/master/docs/Images/ActorTrad.png"/>
+
+<img src="http://netmq.readthedocs.org/en/latest/Images/ActorTrad.png"/>
 
 
 
