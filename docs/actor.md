@@ -172,7 +172,7 @@ L'idée est que chaque thread parle a un actor et reçois/envois un message avec
 
 <br/>
 <br/>
-<img src="https://raw.githubusercontent.com/zeromq/netmq/master/docs/Images/ActorPass.png"/>
+<img src="http://netmq.readthedocs.org/en/latest/Images/ActorPass.png"/>
 
 
 ## Actor demo
@@ -435,7 +435,7 @@ Lorsque vous lancez le programme vous obtenez :
 
 <br/>
 <br/>
-<img src="https://raw.githubusercontent.com/zeromq/netmq/master/docs/Images/ActorsOut.png"/>
+<img src="http://netmq.readthedocs.org/en/latest/Images/ActorsOut.png"/>
 
 
 
