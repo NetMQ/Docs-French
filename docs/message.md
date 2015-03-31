@@ -1,7 +1,7 @@
-What's a message (Traduction en Cours...)
+Qu'est ce qu'un Message
 =====
 
-So if you have come here after looking at some of the introductory material, you may have come across an example or 2, maybe even a "hello world" example which may have gone something like this:
+Si vous arrivez là après avoir lu l'introduction ou vu quelques exemples, ce genre de code ne vous est pas inconnu...
 
     using (NetMQContext ctx = NetMQContext.Create())
     {
@@ -29,43 +29,38 @@ So if you have come here after looking at some of the introductory material, you
         }
     }
 
+Ici c'est la méthode <code>RecieveString()</code> des <code>NetMQSocket</code> qui est utilisée. Cette méthode est utile mais a ses limites car ZeroMQ (et donc NetMQ) est basé sur le concept de 'Frame', ce qui induit un protocole dans les échanges de données suivant les NetMqSocket utilisées.
 
-Where you may have noticed (or perhaps not) that the NetMQ socket(s) have a <code>RecieveString()</code> method. This is good, and extremely useful, but you may be fooled into thinking this is what you should be using all the time.
+Par exemple, la [RouterSocket](http://netmq.readthedocs.org/fr/latest/routerDealer/) utilise un certain protocole (ordre et contenu de frame) pour communiquer. Les différentes frame sont "empilés" et dépilés par les NetMQSocket. Une des frame de la NetMQSocket Router contiendra l'adress Ip du client afin que le router puisse envoyer une réponse à celui-ci
 
-Truth is ZeroMQ, and therefore NetMQ are really frame based, which implies some form of protocol. Some of you may balk at this prospect, and may curse, and think damm it, I am not a protocol designer I was not expecting to get my hands that dirty.
+Vous pouvez construire votre propre protocole en utilisant les frames, par exemple :
 
-While it is true that if you wish to come up with some complex and elaborate architecture you would be best of coming up with a nice protocol, thankfully you will not need to do this all the time. This is largely down to ZeroMQ/NetMQ clever socket(s) that abstract away a lot of that from you, and the way in which you can treat the socket(s) as building blocks to build complex architecture (think lego). 
++ Vous pouvez décider d'utiliser la frame[0] comme étant un message spécifique définissant le type de message qui va suivre,
+évitant a une socket de lire la suite si elle n'est pas intéréssé par ce type (exemple Pub/Sub avec Topic)
++ Vous pouvez décider d'utiliser la frame[0] comme étant une commande, la Frame[1] comme paramètre et la frame[2] un conteneur de donnée (Objet serializé en json par exemple)
 
-One precanned example of this is the [RouterSocket](http://netmq.readthedocs.org/en/latest/routerDealer/) which makes very clever use of frames for you out of the box. Where it effectively onion skins the current message with the senders return address, so that when it gets a message back (say from a worker socket), it can use that frame information again to obtain the correct return address and send it back to the correct socket.
+Ce sont juste quelques exemples et vous pouvez utiliser les frames comme bon vous sembles.
 
-So that is one inbuilt use of frames that you should be aware of, but frames are not limited to [RouterSocket](http://netmq.readthedocs.org/en/latest/routerDealer/), you can use them yourself for all sorts of things, here are some examples:
+Quand vous travaillez avec des messages en plusieurs partie (frame) vous devez envoyez/recevoir toutes les parties du message avec lesquelles vous voulez travailler.
 
-+ You may decide to dedicate frame[0] to be a specific message type, that can be examined by sockets to see if they should examine it further (this may be useful in a pub/sub type of arrangement, where frame[0] is the topic. By doing this, the subscribers may save themselves a lot of work of dersializing the rest of the message that they may not care about anyway
-+ You may decide to use frame[0] as some sort of command, frame[1] and some sort of parameter and have frame[2] as the message payload (where it may contain some serialized object, say a JSON seriailized object)
-
-These are just some examples, you can use frames how you wish really
-
-When you work with multipart messages (frames) you must send/receive all the parts of the message you want to work with.
-
-There is also an inbuilt concept of "more" which you can integrate for. We will see some examples of this in just a moment 
+Il y a aussi le concept de 'more' sur les messages, nous en parlerons plus bas.
 
 
+## Commen creer des Frames
 
-## How Do I Create Frames
+Créer un message composé de plusieurs parties est très simple. Il suffit d'utiliser la classe <code>NetMQMessage</code>, et d'utiliser l'une des nombreuses surcharge de la méthode <code>Append()</code>. (des surcharges sont faites pour gérer les Blob/NetMQFrame/Byte[]/int/long/string)
 
-Creating multi part messages is fairly simple, we just need to use the <code>NetMQMessage</code> class, and then make use of one of the many <code>Append()</code> method overloads (there are overloads for appending Blob/NetMQFrame/Byte[]/int/long/string).
-
-Here is a simple example where we create a new <code>NetMQMessage</code> which expects to contain 2 <code>NetMQFrame</code>(s), and we use the <code>NetMQMessage.Append()</code> method to append 2 string values.
+Voici un exemple ou nous créons un <code>NetMQMessage</code> qui contient 2 <code>NetMQFrame</code>(s) et nous utilisons 
+la méthode <code>NetMQMessage.Append()</code> pour mettre 2 string dans ces frames.
 
     var message = new NetMQMessage();
     message.Append("IAmFrame0");
     message.Append("IAmFrame1");
     server.SendMessage(message);
 
+Il y a une autre manière de faire en utilisant la méthode <code>IOutgoingSocket.SendMore()</code>. Cette méthode n'a pas autant de surcharge que <code>NetMQMessage.Append()</code> mais permet d'envoyer des Byte[] et des String.
 
-There is also another way of doing this, which is to use the NetMQ <code>IOutgoingSocket.SendMore()</code> (an internal interface) method. This doesn't have as many overloads as <code>SendMessage</code> but it is still ok, it allows you to send Byte[] and string data quite easily. 
-
-Here is an example of usage, where we are sending 2 string values using the <code>IOutgoingSocket.SendMore()</code> method
+Voici un exemple d'utilisation de <code>IOutgoingSocket.SendMore()</code>
 
 
     var client = ctx.CreateRequestSocket()
@@ -75,13 +70,15 @@ Here is an example of usage, where we are sending 2 string values using the <cod
     client.SendMore("A");
     client.Send("Hello");
 
-The problem with using <code>IOutgoingSocket.SendMore()</code> rather than <code>IOutgoingSocket.Send()</code>, if you intend to send more than 1 frame, is that you MUST ensure you call <code>SendMore</code>, where as if you use the <code>SendMessage()</code> method, you do not have to worry about that, that is all taken care of for you.
+Attention, en utilisant <code>IOutgoingSocket.SendMore()</code> vous devez appeler <code>IOutgoingSocket.Send()</code> pour la dernière partie de votre message. Si vous utilisez la méthode <code>SendMessage()</code>, ceci est géré pour vous.
 
 
 
-## How Do I Read Frames
+## Comment lire des Frames
 
-Reading multiple frames can also be done in 2 ways. You may use the NetMQ conveience <code>RecieveString(out more)</code> method mutiple times, where you would need to know if there was more than 1 message part to read, which you would need to track in a bool variable. This is shown below
+Lire plusieurs Frames peut être fait de deux manières. Vous pouvez utiliser la méthode <code>RecieveString(out more)</code> plusieurs fois (vous devez gérer le fait de savoir combien il y a de frames dans le message)."out more" vous renverra true si d'autre frames sont disponibles.
+
+Par exemple : 
 
     //client send message
     client.SendMore("A");
@@ -105,7 +102,9 @@ Reading multiple frames can also be done in 2 ways. You may use the NetMQ convei
         Console.WriteLine("================================");
     }
     
-An easier way is to use the <code>RecieveMessage()</code> method, and then read the frames as you want to. Here is an example of that
+Une méthode plus simple est d'utiliser <code>RecieveMessage()</code>, et ensuite de lire les frames du message.
+Voici le même exemple avec <code>RecieveMessage()</code>:
+
 
     var message4 = client.ReceiveMessage();
     Console.WriteLine("message4={0}", message4);
@@ -116,9 +115,9 @@ An easier way is to use the <code>RecieveMessage()</code> method, and then read 
 
 
 
-## A Full Example
+## Un exemple complet
 
-Just to solidify this information here is a complete example showing everything we have discussed above:
+
 
     using System;
     using NetMQ;
@@ -193,7 +192,7 @@ Just to solidify this information here is a complete example showing everything 
     }
 
 
-Which when run will give you some output like this:
+Résultat obtenu :
 
 <p>
 <i>
