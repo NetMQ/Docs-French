@@ -115,7 +115,7 @@ Voici le même exemple avec <code>RecieveMessage()</code>:
 
 
 
-## Un exemple complet
+## Exemple complet
 
 
 
