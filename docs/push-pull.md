@@ -3,7 +3,7 @@ Push / Pull
 
 NetMq implémente les <code>PushSocket</code> et <code>PullSocket</code>. Voyons comment les utiliser
 
-Normalement ces deux socket vont de pair. Une <code>PushSocket</code> va envoyer des données à une <code>PullSocket</code>, tandis qu'une <code>PullSocket</code> s'attend a recevoir des données d'une ou plusieurs <code>PushSocket</code>. Jusqu'ici pas de problèmes!
+Normalement ces deux socket vont de pair. Une <code>PushSocket</code> va envoyer des données à une <code>PullSocket</code>, tandis qu'une <code>PullSocket</code> s'attend à recevoir des données d'une ou plusieurs <code>PushSocket</code>. Jusqu'ici pas de problèmes!
 
 Vous pouvez utiliser cette configuration pour faire une architecture permettant par exemple de distribués du travail, un peu comme la patterne <a href="http://zguide.zeromq.org/page:all#Divide-and-Conquer" target="_blank">divide and conquer</a>.
 
