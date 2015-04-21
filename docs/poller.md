@@ -1,36 +1,36 @@
-Handling Multiple Sockets (Traduction en Cours...)
+Gérer plusieurs Sockets
 =====
 
-So why would you want to handle multiple sockets anyway? Well, there are a variety of reasons, such as:
+Pourquoi vouloir géréer plusieurs sockets en même temps ? Il existe plusieurs raison à cela : 
 
-+ You may have multiple sockets within one process that rely on each other, and the timings are such that you need to know that the socket(s) are ready before it/they can receive anything
-+ You may have a Request, as well as a Publisher socket in one process
++ Vous avez plusieurs socket dans un même process qui sont reliées les unes aux autres et vous devez savoir quand chacunes d'elles est prête à recevoir des données.
++ Vous voulez avoir une requete ainsi qu'un publisher dans un même process.
 
-There are times you may end up with more than one socket per process. And there may be occasions when you only want to use the socket(s) when they are deemed ready.
+Des fois vous allez avoir besoin de gérer plusieurs socket dans un même process. Et souvent vous voudrez utilisez les sockets que lorsqu'elles sont prêtes à être utilisées.
 
-ZeroMQ actually has a concept of a <code>Poller</code> that can be used to determine if a socket is deemed ready to use.
+ZeroMq instaure ici le concept de <code>Poller</code> pour savoir si une socket est prête.
 
-NetMQ has an implementation of the <code>Poller</code>, and it can be used to do the following things:
+NetMQ a une implémentation du <code>Poller</code>, et il peut être utilisé pour :
 
-+ Monitor a single socket, for readiness
-+ Monitor an <code>IEnumerable<NetMQSocket></code> for readiness
-+ Allow <code>NetMQSocket</code>(s) to be added dynamically and still report on the readiness of the new sockets
-+ Allow <code>NetMQSocket</code>(s) to be removed dynamically
-+ Raise an event on the socket instance when it is ready
-
-
-## Poller Methods
-
-There are several methods available on the <code>Poller</code> to help you. Most notably <code>AddSocket(..)/RemoveSocket(..)</code> and <code>Start()/Stop()</code>. 
-
-The idea is that you would use the <code>AddSocket</code> to add the socket you want to monitor for "readiness" to the <code>Poller</code> instance, and then some time later call the <code>Poller.Start()</code> method, at which point the <code>Poller</code> will call back any registered <code>ReceiveReady</code> event handler delegates
++ Gérer une socket, pour savoir si la lecture est prête.
++ Gérer une liste de socket (<code>IEnumerable<NetMQSocket></code>) pour savoir si la lecture est prête.
++ Autoriser des <code>NetMQSocket</code>(s) a être ajouté dynamiquement et déterminer si les nouvelles requêtes sont prêtres à être lues.
++ Autorisé des <code>NetMQSocket</code>(s) à être supprimées dynamiquement.
++ Lever un evennement quan dune socket est prête.
 
 
-## Poller Example
+## Les méthode du Poller 
 
-So now that you know what the <code>Poller</code> does, perhaps it is time to see an example. 
+Le <code>Poller</code> possède plusieurs méthodes qui vont vous aider à gerer tout ca. Plus précisément les méthodes <code>AddSocket(..)/RemoveSocket(..)</code> et <code>Start()/Stop()</code>.
 
-The code below is a fully working Console application that demonstrates a single socket being added to the <code>Poller</code>. It can also be seen that the <code>ReceiveReady</code> event is hooked up too. The <code>Poller</code> will call this event handler back when the Socket (the one that is added to the <code>Poller</code>) is "Ready".
+Vous devez utiliser la méthode <code>AddSocket</code> pour ajouter dynamiquement une socket et vérifier son état de "prête pour la lecture", et ensuite appeller la méthode <code>Poller.Start()</code>.A ce moment, le <code>Poller</code> va appelle tous les evennements <code>ReceiveReady</code>.
+
+
+## Poller Exemple
+
+Maintenant que l'on sait à quoi sert le <code>Poller</code>, voyons un petit exemple. 
+
+Dans le code suivant, une seule requête est ajouter au <code>Poller</code>. Nous pouvons voir que l'evennement <code>ReceiveReady</code> est gérer. Le <code>Poller</code> va automatiquement appeler l'evennement quand la requete sera "prête".
 
 
     using System;
@@ -90,7 +90,7 @@ The code below is a fully working Console application that demonstrates a single
     }
 
 
-When you run this you should see something like this appear in the Console output:
+Vous devriez voir dans la console :
 
 <p>
 <i>
@@ -101,10 +101,9 @@ messageBack = World<br/>
 
 
 
+A partir de cet exemple, nous pouvons maintenant supprimer la <code>ResponseSocket</code> du <code>Poller</code> dès que nous voyons le premiers message, ce qui veux dire que nous ne devrions plus recevoir aucunes informations sur la <code>ResponseSocket</code>. 
 
-Building on this example. What we can now do is to remove the <code>ResponseSocket</code> from the <code>Poller</code> once we see the 1st message, which should mean that we no longer recieve any messages on the removed <code>ResponseSocket</code>. We will stick with the same example code, but this time we have added a <code>Poller.RemoveSocket(..)</code> in the <code>rep.ReceiveReady</code> event handler code.
-
-Here is the new modified code
+Voici le nouveau code :
 
 
     using System;
@@ -182,7 +181,7 @@ Here is the new modified code
     }
 
 
-Which when run gives this output now.
+Ce qui donne :
 
 <p><i>
 messageIn = Hello<br/>  
@@ -191,15 +190,14 @@ Carrying on doing the rest<br/>
 </i>
 </p>
 
-
-See how we did not get any output for the "Hello Again" message we attempted to send. This is due to the <code>ResponseSocket</code> being removed from the <code>Poller</code> earlier.
+Nous n'avons pas le message "Hello Again" que nous avons envoyés car la <code>ResponseSocket</code> a été supprimé du <code>Poller</code> avant.
 
 
 ## Timer(s)
 
-Another thing the Poller allows is to add/remove <code>NetMQTimer</code> instances, which you may do using the <code>AddTimer(..) / RemoveTimer(..)</code> methods. 
+Une autre fonctionnalité du <code>Poller</code> est de pouvoir gérer des <code>Timer</code> en appellant les méthodes <code>AddTimer(..) / RemoveTimer(..)</code>. 
 
-Where the added timers get called back the <code>Poller</code>. Here is a simple example that adds a <code>NetMQTimer</code> which expects to wait for 5 Seconds. The <code>NetMQTimer</code> instance is added to the <code>Poller</code>, which internally calls the <code>NetMQTimer.Elapsed</code> event handler callback delegates.
+Voici un exemple qui montre comment on ajoute un <code>NetMQTimer</code> qui attend 5 secondes. Le <code>NetMQTimer</code> est ajouter au <code>Poller</code>, qui va s'occuper de déclencher le <code>NetMQTimer.Elapsed</code>.
 
     using System;
     using System.Collections.Generic;
@@ -241,7 +239,7 @@ Where the added timers get called back the <code>Poller</code>. Here is a simple
     }
 
 
-Which when run gives this output now.
+Ce qui donne :
 
 <p><i>
 Timer done<br/>  
@@ -251,6 +249,6 @@ Timer done<br/>
 
 
 
-## Further Reading
+## Pour aller plus loin
 
-Another good place to look is at the test cases <a href="https://github.com/zeromq/netmq/blob/master/src/NetMQ.Tests/PollerTests.cs" target="_blank">Poller tests</a>
+Pour plus d'utilisation du <code>Poller</code> vous pouvez aller sur <a href="https://github.com/zeromq/netmq/blob/master/src/NetMQ.Tests/PollerTests.cs" target="_blank">Poller tests</a>
