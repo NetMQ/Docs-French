@@ -16,10 +16,10 @@ NetMQ a une implémentation du <code>Poller</code>, et il peut être utilisé po
 + Gérer une liste de socket (<code>IEnumerable<NetMQSocket></code>) pour savoir si la lecture est prête.
 + Autoriser des <code>NetMQSocket</code>(s) a être ajouté dynamiquement et déterminer si les nouvelles requêtes sont prêtres à être lues.
 + Autorisé des <code>NetMQSocket</code>(s) à être supprimées dynamiquement.
-+ Lever un evennement quan dune socket est prête.
++ Lever un evennement quand une socket est prête.
 
 
-## Les méthode du Poller 
+## Les méthodes du Poller 
 
 Le <code>Poller</code> possède plusieurs méthodes qui vont vous aider à gerer tout ca. Plus précisément les méthodes <code>AddSocket(..)/RemoveSocket(..)</code> et <code>Start()/Stop()</code>.
 
