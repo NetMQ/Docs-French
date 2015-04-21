@@ -315,9 +315,9 @@ Total elapsed time 1492 msec<br/>
 
 On voit bien ici que plus on augmente le nombre de travailleurs, plus le temps d'execution des taches diminue.
 
-Il y a cependant quelques points d'attentions sur cette patterne.
+Il y a cependant quelques points d'attentions sur cette paterne.
 
 + Le <code>Ventilator</code> utilise une NetMQ <code>PushSocket</code> pour distribuer le travail aux <code>Worker</code>s, c'est du load balencing
-+ Le <code>Ventilator</code> et le <code>Sink</code> sont les parties statique de l'architecture, alors que les <code>Worker</code>s sont dynamiques.
++ Le <code>Ventilator</code> et le <code>Sink</code> sont les parties statiques de l'architecture, alors que les <code>Worker</code>s sont dynamiques.
 + Nous devons synchroniser le debut du batch (Quand les <code>Worker</code>s sont prêts), sinon le premier <code>Worker</code> quyi se connectera aura plus de messages que les autres, ce qui n'est pas vraiment du load balencing dans ce cas.
 + Le <code>Sink</code> utilise une NetMQ <code>PullSocket</code> pour traiter les résultats des <code>Worker</code>s
