@@ -5,11 +5,11 @@ NetMq implémente les <code>PushSocket</code> et <code>PullSocket</code>. Voyons
 
 Normalement ces deux socket vont de pair. Une <code>PushSocket</code> va envoyer des données à une <code>PullSocket</code>, tandis qu'une <code>PullSocket</code> s'attend à recevoir des données d'une ou plusieurs <code>PushSocket</code>. Jusqu'ici pas de problèmes!
 
-Vous pouvez utiliser cette configuration pour faire une architecture permettant par exemple de distribués du travail, un peu comme la patterne <a href="http://zguide.zeromq.org/page:all#Divide-and-Conquer" target="_blank">divide and conquer</a>.
+Vous pouvez utiliser cette configuration pour faire une architecture permettant par exemple de distribuer du travail, un peu comme la patterne <a href="http://zguide.zeromq.org/page:all#Divide-and-Conquer" target="_blank">divide and conquer</a>.
 
-L'idée est d'avoir une partie qui génère du travail et qui le distribue à 1-n "travailleurs". Chaque "travailleur" fait son boulot et renvoi ses résultat au process (peut aussi etre un thread) ou les résultats sont traités.
+L'idée est d'avoir une partie qui génère du travail et qui le distribue à 1-n "travailleurs". Chaque "travailleur" fait son boulot et renvoi ses résultats au process (peut aussi etre un thread) où les résultats sont traités.
 
-Dans le <a href="http://zguide.zeromq.org/page:all" target="_blank">guide ZeroMQ</a>, il y a un exemple qui montre comment le ditribueur de tache dit aux travailleurs d'attendre pendant une certaine periode.
+Dans le <a href="http://zguide.zeromq.org/page:all" target="_blank">guide ZeroMQ</a>, il y a un exemple qui montre comment le ditributeur de tache dit aux travailleurs d'attendre pendant une certaine période.
 
 Nous allons essayés de créer un exemple un peu plus élaboré, le distributeur de tache va envoyer le temps que chaque travailleur doit attendre (simulation d'un travail a faire).
 
