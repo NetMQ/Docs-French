@@ -1,7 +1,7 @@
 Gérer plusieurs Sockets
 =====
 
-Pourquoi vouloir géréer plusieurs sockets en même temps ? Il existe plusieurs raison à cela : 
+Pourquoi vouloir gérer plusieurs sockets en même temps ? Il existe plusieurs raison à cela : 
 
 + Vous avez plusieurs socket dans un même process qui sont reliées les unes aux autres et vous devez savoir quand chacunes d'elles est prête à recevoir des données.
 + Vous voulez avoir une requete ainsi qu'un publisher dans un même process.
