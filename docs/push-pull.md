@@ -1,21 +1,21 @@
-Push / Pull (Traduction en Cours...)
+Push / Pull
 =====
 
-NetMQ comes with a <code>PushSocket</code> and a <code>PullSocket</code>. What are these and how should they be used?
+NetMq implémente les <code>PushSocket</code> et <code>PullSocket</code>. Voyons coimment les utiliser
 
-Well a <code>PushSocket</code> is normally used to push to a <code>PullSocket</code>, whilst the <code>PullSocket</code> will pull from a <code>PushSocket</code>. Sounds obvious right!
+Normalement ces deux socket vont de pair. Une <code>PushSocket</code> va envoyer des données à une <code>PullSocket</code>, tandis qu'une <code>PullSocket</code> s'attend a recevoir des données d'une ou plusieurs <code>PushSocket</code>. Jusqu'ici pas de problèmes!
 
-You would typically use this configuration of sockets to produce some distributed work, kind of like a <a href="http://zguide.zeromq.org/page:all#Divide-and-Conquer" target="_blank">divide and conquer</a> arrangement.
+Vous pouvez utiliser cette configuration pour faire une architecture permettant par exemple de distribués du travail, un peu comme la patterne <a href="http://zguide.zeromq.org/page:all#Divide-and-Conquer" target="_blank">divide and conquer</a>.
 
-The idea is that you have something that generates work, and then distributes the work out to n-many workers. The workers each do some work, and push their results to some other process (could be a thread too) where the workers results are accumulated.
+L'idée est d'avoir une partie qui génère du travail et qui le distribue à 1-n "travailleurs". Chaque "travailleur" fait son boulot et renvoi ses résultat au process (peut aussi etre un thread) ou les résultats sont traités.
 
-In the <a href="http://zguide.zeromq.org/page:all" target="_blank">ZeroMQ guide</a>, it shows an example that has the work generator just tell each worker to sleep for a period of time. 
+Dans le <a href="http://zguide.zeromq.org/page:all" target="_blank">guide ZeroMQ</a>, il y a un exemple qui montre comment le ditribueur de tache dit aux travailleurs d'attendre pendant une certaine periode.
 
-We toyed with creating a more elaborate example than this, but in the end felt that the examples simplicity was quite important, so we have stuck with the workload for each worker just being a value that tells the work to sleep for a number of Milliseconds (thus simulating some actual work).  This as I say has been borrowed from the <a href="http://zguide.zeromq.org/page:all" target="_blank">ZeroMQ guide</a>.
+Nous allons essayés de créer un exemple un peu plus élaboré, le distributeur de tache va envoyer le temps que chaque travailleur doit attendre (simulation d'un travail a faire).
 
-In real life the work could obviously be anything, though you would more than likely want the work to be something that could be cut up and distributed without the work generator caring/knowing how many workers there are.
+En réalité , ce travail pourrait être n'importe quelle tache, du moment que ce sont des taches qui peuvent se découper en sous-tâches bien séparées, peut importe le nombre de "travailleurs".
 
-Here is what we are trying to achieve :
+Voici un diagramme de ce que nous essayons de faire :
 
 <br/>
 <br/>
@@ -25,7 +25,7 @@ Here is what we are trying to achieve :
 <br/>
 <br/>
 
-Here is the code
+et le code....
 
 **Ventilator**
 
@@ -221,8 +221,7 @@ Here is the code
 
 
 
-
-To run this, these 3 BAT files may be useful, though you will need to change them to suit your code location should you choose to copy this example code into a new set of projects
+Pour lancer le programme, ces 3 fichiers Bat vous serons utiles.
 
 
 <br/>
@@ -240,7 +239,7 @@ cd Worker/bin/Debug<br/>
 start Worker.exe<br/>
 
 
-Which when run should give you some output like this in the Sink process console output (obviously you PC may run faster/slower than mine)
+Vous devrier obtenir en résultat pour 1 travailleur :
 
 <i>
 ====== SINK ======<br/>
@@ -269,7 +268,8 @@ start Worker.exe<br/>
 start Worker.exe<br/>
 
 
-Which when run should give you some output like this in the Sink process console output (obviously you PC may run faster/slower than mine)
+
+Vous devrier obtenir en résultat pour 2 travailleurs :
 
 <i>
 ====== SINK ======<br/>
@@ -298,7 +298,7 @@ start Worker.exe<br/>
 start Worker.exe<br/>
 
 
-Which when run should give you some output like this in the Sink process console output (obviously you PC may run faster/slower than mine)
+Vous devrier obtenir en résultat pour 4 travailleurs :
 
 
 <i>
@@ -312,9 +312,12 @@ Total elapsed time 1492 msec<br/>
 
 <br/>
 <br/>
-There are a couple of points to be aware of with this pattern
 
-+ The <code>Ventilator</code> uses a NetMQ <code>PushSocket</code> to distribute work to the <code>Worker</code>s, this is referred to as load balancing
-+ The <code>Ventilator</code> and the <code>Sink</code> are the static parts of the system, where as <code>Worker</code>s are dynamic. It is trivial to add more  <code>Worker</code>s, we can just spin up a new instance of a  <code>Worker</code>s, and in theory the work gets done quicker.
-+ We need to synchronize the starting of the batch (when  <code>Worker</code>s are ready), as if we did not do that, the first  <code>Worker</code>s that connected would get more messages that the rest, which is not really load balanced
-+ The  <code>Sink</code> uses a NetMQ <code>PullSocket</code> to accumulate the results from the  <code>Worker</code>s
+On voit bien ici que plus on augmente le nombre de travailleurs, plus le temps d'execution des taches diminue.
+
+Il y a cependant quelques points d'attentions sur cette patterne.
+
++ Le <code>Ventilator</code> utilise une NetMQ <code>PushSocket</code> pour distribuer le travail aux <code>Worker</code>s, c'est du load balencing
++ Le <code>Ventilator</code> et le <code>Sink</code> sont les parties statique de l'architecture, alors que les <code>Worker</code>s sont dynamiques.
++ Nous devons synchroniser le debut du batch (Quand les <code>Worker</code>s sont prêts), sinon le premier <code>Worker</code> quyi se connectera aura plus de messages que les autres, ce qui n'est pas vraiment du load balencing dans ce cas.
++ Le <code>Sink</code> utilise une NetMQ <code>PullSocket</code> pour traiter les résultats des <code>Worker</code>s
