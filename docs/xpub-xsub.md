@@ -1,54 +1,52 @@
-XPub / XSub (Traduction en Cours...)
+XPub / XSub
 =====
 
 
 <i>
-One of the problems you will hit as you design larger distributed architectures is discovery. That is, how do pieces know about each other? It's especially difficult if pieces come and go, so we call this the "dynamic discovery problem".
+L'un des problèmes lorsque l'on design une architecture ditribuées qui peut s'agrandir est la découverte des autres. Comment chaques noeuds connait la présence des autres. C'est spécialement difficile lorsque les noeuds sont dynamique. Nous appelons cela le "probleme de découverte dynamique";
 <br/>
 <br/>
-There are several solutions to dynamic discovery. The simplest is to entirely avoid it by hard-coding (or configuring) the network architecture so discovery is done by hand. That is, when you add a new piece, you reconfigure the network to know about it.
+Il y a plusieurs solution à ce problème. La plus simple est de simplement l'éviter en "Hard-Codant" (configuration) l'architecture du réseau, la découverte est donc faite à la main. Quand vous avez un nouveau noeud, vous le déclarez dans un fichier de configuration.
 <br/>
 <br/>
 <img src="https://github.com/imatix/zguide/raw/master/images/fig12.png"/>
 <br/>
 <br/>
-In practice, this leads to increasingly fragile and unwieldy architectures. Let's say you have one publisher and a hundred subscribers. You connect each subscriber to the publisher by configuring a publisher endpoint in each subscriber. That's easy. Subscribers are dynamic; the publisher is static. Now say you add more publishers. Suddenly, it's not so easy any more. If you continue to connect each subscriber to each publisher, the cost of avoiding dynamic discovery gets higher and higher.
+En principe, c'est une architecture extremement fragile. Imaginez que vous ayez une centaine de clients et un server. Vous configurez chaques clients pour qu'ils connaissent l'adresse du serveur. Si vous ajouter un client, aucun problème. Ca se complique lorsque vous décidez d'ajouter un serveur...
 <br/>
 <br/>
 <img src="https://github.com/imatix/zguide/raw/master/images/fig13.png"/>
 <br/>
 <br/>
-There are quite a few answers to this, but the very simplest answer is to add an intermediary; that is, a static point in the network to which all other nodes connect. In classic messaging, this is the job of the message broker. ZeroMQ doesn't come with a message broker as such, but it lets us build intermediaries quite easily.
+L'autre manière est d'avoir un intermédiaire. Cet intermédiaire est statique. Dans une architecture de messaging, c'est ce que l'on appelle le "broker". ZeroMQ ne contient pas de "broker" en tant que tel, mais il permet d'en définir un assez facilement.
 <br/>
 <br/>
-You might wonder, if all networks eventually get large enough to need intermediaries, why don't we simply have a message broker in place for all applications? For beginners, it's a fair compromise. Just always use a star topology, forget about performance, and things will usually work. However, message brokers are greedy things; in their role as central intermediaries, they become too complex, too stateful, and eventually a problem.
+Vous devez vous demander, si tous les réseaux deviennent assez grand pour avoir besoin d'intermédiaire, pourquoi ne mettons nous pas simplement un message broker en place dans chaque application ? Pour les débutants, une topology en étoile est un bon compromis. Mais un message broker est une partie difficile et complexe et peut devenir rapidement un probleme.
 <br/>
 <br/>
-It's better to think of intermediaries as simple stateless message switches. A good analogy is an HTTP proxy; it's there, but doesn't have any special role. Adding a pub-sub proxy solves the dynamic discovery problem in our example. We set the proxy in the "middle" of the network. The proxy opens an XSUB socket, an XPUB socket, and binds each to well-known IP addresses and ports. Then, all other processes connect to the proxy, instead of to each other. It becomes trivial to add more subscribers or publishers.
+Il est plus facile de penser l'intermédiaire comme un simple diffuseur de message sans état. Un ebonne analogie est le proxy Http. Ca n'a pas de fonction spéciale mis à part diffusée la requete. Ajouter un PUB-SUB résoud notre problème de découverte dynamique dans notre exemple. Nous définissons le "proxy" comme étant au centre de notre réseau. Le proxy ouvre une XSUB Socket, une XPUB Socket et bind chaqu une d'elle a une adresse statique du réseau. Ensuite chaqu'un se connecte au proxy à la place de se connecter directement aux autres noeuds. Cela devient facile d'ajouter des subscriber et des publisher.
 <br/>
 <br/>
-We need XPUB and XSUB sockets because ZeroMQ does subscription forwarding from subscribers to publishers. XSUB and XPUB are exactly like SUB and PUB except they expose subscriptions as special messages. The proxy has to forward these subscription messages from subscriber side to publisher side, by reading them from the XSUB socket and writing them to the XPUB socket. This is the main use case for XSUB and XPUB.
+Nous avons besoin de XPUB et XSUB car ZeroMQ fait un suivi des abonnements entre les publisher et les subscriber. XSUB et XPUB sont comme SUB et PUB, à l'exception qu'elles exposent ces abonnements comme étant des messages spéciaux. Le proxy doit faire suivre ces message spéciaux d'abonnements du subscriber vers le publisher, en les lisant dans la socket XSUB et en les écrivant dans la socket XPUB. C'est la principale utilité de XSUB et XPUB.
 </i>
 <br/>
 <br/>
-The text above is taken from <a href="ZeroMQ guide - dynamix discovery problem" target="_blank">http://zguide.zeromq.org/page:all#The-Dynamic-Discovery-Problem</a>, we just could not have said it better ourselves, and this library is really part of ZeroMQ anyway, so please forgive us.
+Le texte ci dessus est tiré de <a href="ZeroMQ guide - dynamix discovery problem" target="_blank">http://zguide.zeromq.org/page:all#The-Dynamic-Discovery-Problem</a>.
 
 
-## An Example
+## Un exemple
 
-So now that we have gone through why you would use XPub/XSub, lets now look at an example. This example sticks
-very closely to the orginal <a href="ZeroMQ guide - dynamix discovery problem" target="_blank">http://zguide.zeromq.org/page:all#The-Dynamic-Discovery-Problem</a>, and is broken
-down into 3 main components, which are:
+Maintenant que vous savez pourquoi utiliser XPUB et XSUB, regardons un exemple. Cet exemple est très proche de l'exemple du guide ZeroMQ, <a href="ZeroMQ guide - dynamix discovery problem" target="_blank">http://zguide.zeromq.org/page:all#The-Dynamic-Discovery-Problem</a>, et est séparé en trois composants :
 
 + Publisher
 + Intermediary
 + Subscriber
 
-Here is the code for these 3 components:
+Voiuci le code des différents composants:
 
 **Publisher**
 
-It can be seen that the <code>PublisherSocket</code> connnects to the <code>XSubscriberSocket</code> address
+La <code>PublisherSocket</code> se connecte à la <code>XSubscriberSocket</code> adresse.
 
     using System;
     using NetMQ;
@@ -102,16 +100,14 @@ It can be seen that the <code>PublisherSocket</code> connnects to the <code>XSub
 
 **Intermediary**
 
-The intermediary (the process that owns the <code>XPublisherSocket</code> / <code>XSubscriberSocket</code>) is responsible for relaying
-the messages as follows:
+L'intermédiaire (Le processus qui contient les socket <code>XPublisherSocket</code> / <code>XSubscriberSocket</code>) sont responsable du relais du message comme définis:
 
-+ From the <code>XPublisherSocket</code> to the <code>XSubscriberSocket</code>
-+ From the <code>XSubscriberSocket</code> to the <code>XPublisherSocket</code>
++ De la <code>XPublisherSocket</code> à la <code>XSubscriberSocket</code>
++ De la <code>XSubscriberSocket</code> à la <code>XPublisherSocket</code>
 
-This would be done with the use of the NetMQ <code>Poller</code>, but there is a better way, which is to use the NetMQ <code>Proxy</code> which allows
-you to specify 2 sockets, which you wish to proxy between. The NetMQ <code>Proxy</code> will take care of sending the front end messages to the back end, and vice versa.
+Nous utilisons le <code>Poller</code> NeTMQ, mais il y a une meilleur manière en utilisant le <code>Proxy</code> NeTMQ, qui vous permet de définir de socket que vous voulez "proxifiez". Le <code>Proxy</code> NetMQ se charge d'envoyer les messages d'une socket à l'autre et vice versa.
 
-This is the appoach we have shown in this example. Anyway enough pyscho bablble, here is the code:
+Voici le code :
 
     using System;
     using System.Threading.Tasks;
@@ -158,7 +154,7 @@ This is the appoach we have shown in this example. Anyway enough pyscho bablble,
 
 **Subscriber**
 
-It can be seen that the <code>SubscriberSocket</code> connnects to the <code>XPublisherSocket</code> address
+Nous pouvons voir que la socket <code>SubscriberSocket</code> se connecte à la <code>XPublisherSocket</code> address
 
     using System;
     using System.Collections.Generic;
@@ -227,9 +223,7 @@ It can be seen that the <code>SubscriberSocket</code> connnects to the <code>XPu
         }
     }
 
-
-When you run this, it should look something like this (depending on how many subscribers you have, and what topics they are subsribed too, of course now that we
-have a nice topology you could indeed have more publishers too)
+Vous devriez obtenir ceci comme résultat (cela dépend du nombre de subscriber , et à quels topics ils sont inscrits. Mais il n'est pas difficile d'en ajouter ou d'ajouter des publishers)
 <br/>
 <br/>
 <img src="https://raw.githubusercontent.com/zeromq/netmq/master/docs/Images/XPubXSubDemo.png"/>
@@ -238,8 +232,7 @@ have a nice topology you could indeed have more publishers too)
 
 
 
-
-To run this, these 4 BAT file you may be useful, though you will need to change them to suit your code location should you choose to copy this example code into a new set of projects
+Voici 4 fichiers BAT qui vous aideront...
 
 
 **RunXPubXSub.bat**
