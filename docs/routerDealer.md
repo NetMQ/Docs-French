@@ -1,64 +1,61 @@
-Router Dealer (Traduction en Cours...)
+Router Dealer
 =====
 
 
 ## RouterSocket
 <i>
-The ROUTER socket, unlike other sockets, tracks every connection it has, and tells the caller about these. The way it tells the caller is to stick the connection identity in front of each message received. An identity, sometimes called an address, is just a binary string with no meaning except "this is a unique handle to the connection". Then, when you send a message via a ROUTER socket, you first send an identity frame.
+La socket ROUTER, contrairement aux autres socket, traque chaques connections qu'elle a, et insert une frame d'identité au début de chaque message qu'elle recoit avant de passer le message. Une identité, parfois appellée adresse, est un "handle" unique pour la connection. Quand vous envoyez un message par une socket ROUTER, vous envoyez d'abord une frame d'identité.
 
-When receiving messages a ZMQ_ROUTER socket shall prepend a message part containing the identity of the originating peer to the message before passing it to the application. Messages received are fair-queued from among all connected peers. When sending messages a ZMQ_ROUTER socket shall remove the first part of the message and use it to determine the identity of the peer the message shall be routed to.
+Quand une socket ROUTER reçoit un message, elle ajoute l'identité du client dans le message et fait passer le message à l'application.Les messages reçus sont mis en file d'attente parmis tous les messages des clients connectés. Quand une socket ROUTER recçoit une réponse et renvoie cette réponse à un client, elle lit la première frame du message qui contient l'identité du client, retire cette frame du message et fait passer le message au client (elle connait l'identité grâce à cette première frame)
 
-Identities are a difficult concept to understand, but it's essential if you want to become a ZeroMQ expert. The ROUTER socket invents a random identity for each connection with which it works. If there are three REQ sockets connected to a ROUTER socket, it will invent three random identities, one for each REQ socket.
+L'identité est un concept difficile à comprendre, mais c'est essentiel si vous voulez devenir un exprt ZeroMQ. La socket ROUTER invente une identité aléatoire pour chaque client avec lequel elle va travaillé. Si trois requètes REQ se connectent à une socket ROUTER, elle va creer trois identité aléatoire, une pour chaque REQ.
 </i>
 <br/>
 <br/>
-The text above is taken from <a href="http://zguide.zeromq.org/page:all" target="_blank">ZeroMQ guide</a>.
+Ce texte est pris du <a href="http://zguide.zeromq.org/page:all" target="_blank">guide ZeroMQ</a>.
 
+Disons qu'une socket <code>DealerSocket</code> a trois bytes d'identité ABC. Cela veut dire que la socket ROUTER contient une hashtable avec en clé ABC et en valeur l'adresse de la <code>DealerSocket</code>.
 
-So if we looked at a small example, let's say a <code>DealerSocket</code> socket has a 3-byte identity ABC. Internally, this means the <code>RouterSocket</code> socket keeps a hash table where it can search for ABC and find the TCP connection for the <code>DealerSocket</code> socket.
-
-When we receive the message off the <code>DealerSocket</code> socket, we get three frames.
+Quand nous recevons un message de la <code>DealerSocket</code>, nous avons trois frames.
 <br/>
 <br/>
 <img src="https://github.com/imatix/zguide/raw/master/images/fig28.png"/>
 </i>
 
 
-### Identities and Addresses
+### Identités et Adresses.
 <i>
-The identity concept in ZeroMQ refers specifically to ROUTER sockets and how they identify the connections they have to other sockets. More broadly, identities are used as addresses in the reply envelope. In most cases, the identity is arbitrary and local to the ROUTER socket: it's a lookup key in a hash table. Independently, a peer can have an address that is physical (a network endpoint like "tcp://192.168.55.117:5670") or logical (a UUID or email address or other unique key).
+Le concept d'identité dans ZeroMQ fait référence aux socket ROUTER et comment elles identifient les connections qu'elles ont avec les autres sockets. Plus simplement, les identités sont utilisées comme adresses de retour des messages. La plupart du temps, l'identité est arbitraire et local à une socket ROUTER : C'est une clé dans une hashtable. Indépendemment, un noeud peut avoir une adresse physique comme "tcp://192.168.55.117:5670" ou logique (un Guid ou une adresse mail ou n'importe quelle clé unique)
 
-An application that uses a ROUTER socket to talk to specific peers can convert a logical address to an identity if it has built the necessary hash table. Because ROUTER sockets only announce the identity of a connection (to a specific peer) when that peer sends a message, you can only really reply to a message, not spontaneously talk to a peer.
+Une application qui utilise une socket ROUTER pour parler à un client spécifique peut convertir une adresse logique en clé d'identité si elle a construite la hashtable nécéssaire. Comme une socket ROUTER annonce seulement l'identité de la connection spécifique d'un client quand ce client envoie un message, vous ne pouvez répondre qu'a un message et non directement vous connecter au client.
 
-This is true even if you flip the rules and make the ROUTER connect to the peer rather than wait for the peer to connect to the ROUTER. However you can force the ROUTER socket to use a logical address in place of its identity. The zmq_setsockopt reference page calls this setting the socket identity. It works as follows:
+C'est aussi valable si vous inversez les rêgles et que vous forcez le ROUTER à se connecter à un client à la place d'attendre que le client se connecte. Cependant vous pouvez forcer la socket ROUTER a utiliser une adresse logique à la place d'une identité. La page de référence sur l'option "zmq_setsockopt" appelle cette option la socket identité. 
+Cela marche comme cela : 
 
-+ The peer application sets the ZMQ_IDENTITY option of its peer socket (DEALER or REQ) before binding or connecting.
-+ Usually the peer then connects to the already-bound ROUTER socket. But the ROUTER can also connect to the peer.
-+ At connection time, the peer socket tells the router socket, "please use this identity for this connection".
-+ If the peer socket doesn't say that, the router generates its usual arbitrary random identity for the connection.
-+ The ROUTER socket now provides this logical address to the application as a prefix identity frame for any messages coming in from that peer.
-+ The ROUTER also expects the logical address as the prefix identity frame for any outgoing messages.
++ L'application client met l'option ZMQ_IDENTITY sur la socket cliente (DEALER or REQ) avant de binder ou de se connecter.
++ Habituellement le client se connecte à une socket ROUTER déjà attachéé. Mais la socket ROUTER peut aussi se connecter au client.
++ Lors de la connection,la socket cliente dit à la sockjet ROUTER "utilise cette identité pour cette connection".
++ Si la socket cliente ne le spécifie pas, alors la socket ROUTER utilise le mécanisme habituel de génération aléatoire d'identité.
++ La socket ROUTER utilise maintenant cette adresse logique comme identité du client pour chaque message venant de ce client.
++ La socket ROUTER s'attend aussi à recevoir cette première frame d'identité pour chaque message retour à retransmettre au client.
 </i>
 <br/>
 <br/>
-The text above is taken from <a href="http://zguide.zeromq.org/page:all#Identities-and-Addresses" target="_blank">ZeroMQ guide, Identities and Addresses</a>
+Le texte ci dessus est tiré du <a href="http://zguide.zeromq.org/page:all#Identities-and-Addresses" target="_blank">guide ZeroMQ, Identités et Adresses</a>
 
+La socket ROUTER est asynchrone (non bloquante).
 
 
 
 
 ## DealerSocket
 
-The NetMQ <code>DealerSocket</code> doesn't do anything particularly special, but what it does offer is the ability to work in a fully asynchronous manner. 
+La socket <code>DealerSocket</code> ne fait rien de plus que la socket REQ, mise à part qu'elle est asynchrone (non bloquante).
+Pour les autres socket, les méthodes <code>ReceieveXXX</code> / <code>SendXXX</code> sont  bloquantes et renverront des exceptions si vous n'appellez pas les choses dans le bon ordres ou plusieurs fois d'affillé.
 
-Which if you recall was not something that other socket types could do, where the <code>ReceieveXXX</code> / <code>SendXXX</code> methods are blocking, and would also throw exceptions should you try to call
-things in the wrong order, or more than expected.
+Typiquement, une <code>DealerSocket</code> sera utilisée en conjonction d'une socket <code>RouterSocket</code>, c'est pourquoi nous avons décrite ces deux socket dans la même page de documentation.
 
-
-The main selling point of a <code>DealerSocket</code> is its asynchronous abilities. Typically a <code>DealerSocket</code> would be used in conjunction with a <code>RouterSocket</code>, which is why we have decided to bundle the description of both these socket types into
-this documentation page.
-
-If you want to know more details about socket combinations involving <code>DealerSocket</code>(s), then as ALWAYS the guide is your friend. In particular the <a href="http://zguide.zeromq.org/page:all#toc58" target="_blank">Request-Reply Combinations</a> page of the guide may be of interest.
+Si vous voulez en savoir plus sur les combinaisons possibles avec la <code>DealerSocket</code>, regardez dans le guide ZeroMQ à la page <a href="http://zguide.zeromq.org/page:all#toc58" target="_blank">Request-Reply Combinations</a>.
 
 
 
