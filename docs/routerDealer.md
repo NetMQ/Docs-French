@@ -60,14 +60,14 @@ Si vous voulez en savoir plus sur les combinaisons possibles avec la <code>Deale
 
 
 
-## An example
+## Un exemple
 
-Time for an example. The best way to think of this example is summarized in the bullet points below
+C'est l'heure d'un exemple.
 
-+ There is one server. Which is a <code>RouterSocket</code>. Where the <code>RouterSocket</code>, will use the incoming clients socket (<code>DealerSocket</code>) identity, to work out how to route back the response message to the correct client socket
-+ There are multiple clients created, each in its own thread. These clients are <code>DealerSocket</code>(s). The client socket will provide a fixed identity, such that the server (<code>RouterSocket</code>) wille be able to use the identity supplied to correctly route back messages for this client
++ il y a un serveur qui est une <code>RouterSocket</code>. Cette <code>RouterSocket</code> va utilisée l'identité donnée par la socket cliente (<code>DealerSocket</code>) pour savoir comment renvoyé le résultat au client.
++ Il y a plusieurs client créé, chaqun dans son thread. Ces client sont des <code>DealerSocket</code>(s). Chaquun de ces clients va envoyer une identité fixe.
 
-Ok so that is the overview, what does the code look like, lets see:
+Voici le code :
 
 
     using System;
@@ -199,8 +199,7 @@ Ok so that is the overview, what does the code look like, lets see:
     }
 
 
-When you run this you should see some output something like this (remember this is asynchronous code here, so things may not come in the order you logically expect)
-
+Vous devriez voir avoir ca comme résultat (souvenez vous que ces méthodes sont asynchrones, les choses n'arriveront surement pas de la manière auquel vous vous attendiez )
 
 <i>
 ======================================<br/>
