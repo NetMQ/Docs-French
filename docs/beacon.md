@@ -1,7 +1,7 @@
 Beacon
 ======
 
-`NetMQBeacon` implemente un service de découverte de noeuds sur un réseau local.
+`NetMQBeacon` implémente un service de découverte de noeuds sur un réseau local.
 
 Un "Beacon" peut broadcaster et/ou capturer des annonces de service en utilisant UDP sur le réseau local.
 Vous pouvez définir le format de sortie de vos "Beacon" et définir un filtre qui valide les "Beacon" rentrant.
