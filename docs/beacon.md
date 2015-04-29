@@ -1,25 +1,23 @@
 Beacon
 ======
 
-`NetMQBeacon` implements a peer-to-peer discovery service for local networks.
+`NetMQBeacon` implemente un service de découverte de noeuds sur un réseau local.
 
-A beacon can broadcast and/or capture service announcements using UDP messages on the local area network.
-You can define the format of your outgoing beacons, and set a filter that validates incoming beacons.
-Beacons are sent and received asynchronously in the background.
+Un "Beacon" peut broadcaster et/ou capturer des annonces de service en utilisant UDP sur le réseau local.
+Vous pouvez définir le format de sortie de vos "Beacon" et définir un filtre qui valide les "Beacon" rentrant.
+Les "Beacons" sont envoyés et reçus de manière asynchrone en arrière plan.
 
-We can use the `NetMQBeacon` to discover and connect to other NetMQ/CZMQ services in the network automatically
-without central configuration. Please note that to use `NetMQBeacon` your infrastructure must support broadcast.
-Most cloud providers doesn't support broadcast.
+Nous pouvons utilisés le `NetMQBeacon` pour découvrir et se connecter au autres services NetMQ/CZMQ qui sont disponibles sur le réseau local, et cela de manière automatique, sans avoir besoins d'une configuration centrale. Il faut que votre infrastructure supporte le broadcast de packet UDP. La plupart des Fournisseurs Cloud ne les supportent pas.
 
-This implementation uses IPv4 UDP broadcasts, and is a port of [zbeacon from czmq](https://github.com/zeromq/czmq#toc4-425).
+Cette implémentation utilise IPV4, et est un portage du projet [zbeacon from czmq](https://github.com/zeromq/czmq#toc4-425).
 
-## Example: Implementing a Bus
 
-Following is a simple bus implementation that uses `NetMQBeacon`. This will allow a set of nodes
-to discover one another, configured only via a shared port number.
+## Example: Implémenter un Bus
 
-* Each bus node binds a subscriber socket and connects to other nodes with a publisher socket.
-* Each node will use `NetMQBeacon` to announce its existence and to discover other nodes. We will also use `NetMQActor` to implement our node.
+Voici comment implémenter un simple bus qui utilise `NetMQBeacon`. Nous allons autoriser des noeuds a découvrir d'autre noeuds, simplement grâce à un partage de numéro de port UDP (chercher "broadcast UDP" sous google pour plus d'information)
+
+* Chaque noeud du bus bind une socket SUB et se connecte aux autres noeuds avec une socket PUB.
+* Chaque noeud va utiliser `NetMQBeacon` pour annoncer son existence et découvrir les autres noeuds. Nous allons utiliser `NetMQActor` pour implémenter nos noeuds.
 
 ### The Bus class
 
@@ -221,7 +219,7 @@ to discover one another, configured only via a shared port number.
 
 ### Node implementation
 
-A node on the bus might resemble:
+Un noeud sur le bus est définit:
 
     :::csharp
     using (NetMQContext context = NetMQContext.Create())
@@ -258,6 +256,6 @@ A node on the bus might resemble:
         }
     }
 
-## Further reading
+## En savoir plus
 
-* [Solving the Discovery Problem](http://hintjens.com/blog:32)
+* [Resoudre le problème de découverte de noeuds](http://hintjens.com/blog:32)
